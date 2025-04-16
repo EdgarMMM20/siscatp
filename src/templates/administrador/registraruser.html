@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <title>SISCATP - Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../style.css" rel="stylesheet">
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</head>
+
+<body>
+
+  <div class="sidebar d-none d-lg-block">
+    <a href="#"><ion-icon name="grid-outline"></ion-icon> Dashboard</a>
+    <a href="#"><ion-icon name="people-outline"></ion-icon> Empleados</a>
+    <a href="#"><ion-icon name="cube-outline"></ion-icon> Productos</a>
+    <a href="#"><ion-icon name="bar-chart-outline"></ion-icon> Reportes</a>
+    <a href="#"><ion-icon name="search-outline"></ion-icon> Buscar producto</a>
+    <a href="#"><ion-icon name="settings-outline"></ion-icon> Ajuste</a>
+  </div>
+
+  <header class="topbar">
+    <button class="btn text-white d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+      <ion-icon name="menu-outline" size="large"></ion-icon>
+    </button>
+    <a href="#" class="d-flex align-items-center text-white text-decoration-none">
+      <img src="../imagen/siscatp blanco.png" alt="Logo SISCATP" width="40" height="30" class="me-2">
+      <h4 class="mb-0">SISCATP</h4>
+    </a>
+    <div class="user-info ms-auto dropdown">
+      <span class="d-none d-lg-inline mb-0">bienvenido, Márquez</span>
+      <a class="text-white ms-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <ion-icon name="person"></ion-icon>
+      </a>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+          <h6 class="dropdown-header">Márquez</h6>
+        </li>
+        <li><a class="dropdown-item" href="">Cerrar sesión</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="mobileMenu">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title">SISCATP</h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+      <a href="#" class="d-block px-3 py-2"><ion-icon name="grid-outline"></ion-icon> Dashboard</a>
+      <a href="#" class="d-block px-3 py-2"><ion-icon name="people-outline"></ion-icon> Empleados</a>
+      <a href="#" class="d-block px-3 py-2"><ion-icon name="cube-outline"></ion-icon> Productos</a>
+      <a href="#" class="d-block px-3 py-2"><ion-icon name="bar-chart-outline"></ion-icon> Reportes</a>
+      <a href="#" class="d-block px-3 py-2"><ion-icon name="search-outline"></ion-icon> Buscar producto</a>
+      <a href="#" class="d-block px-3 py-2"><ion-icon name="settings-outline"></ion-icon> Ajuste</a>
+    </div>
+  </div>
+
+  <main class="main-content">
+    <div class="container">
+      <h5 class="section-title mb-3">Registro de empleados</h5>
+
+      <!-- Tabs de navegación -->
+      <ul class="nav nav-pills mb-3 tab-nav rounded-pill px-2 py-1 justify-content-center" id="pills-tab"
+        role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active rounded-pill px-4" id="tab-personal" data-bs-toggle="pill"
+            data-bs-target="#datos-personales" type="button" role="tab">datos personales</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link rounded-pill px-4" id="tab-empleado" data-bs-toggle="pill"
+            data-bs-target="#datos-empleado" type="button" role="tab">datos del empleado</button>
+        </li>
+      </ul>
+
+      <!-- Contenido de las pestañas -->
+      <div class="tab-content bg-white p-4 rounded-4 shadow-sm" id="pills-tabContent">
+
+        <!-- Datos personales -->
+        <div class="tab-pane fade show active" id="datos-personales" role="tabpanel">
+          <form action="/registrardp" method="POST">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label for="rfc">RFC:</label>
+                <input class="form-control custom-input" type="text" id="rfc" name="rfc" required>
+              </div>
+              <div class="col-md-4">
+                <label for="nombre">Nombre:</label>
+                <input class="form-control custom-input" type="text" id="nombre" name="nombre" required>
+              </div>
+              <div class="col-md-4">
+                <label for="app">Apellido paterno:</label>
+                <input class="form-control custom-input" type="text" id="app" name="app" required>
+              </div>
+              <div class="col-md-4">
+                <label for="sexo">Sexo:</label>
+                <select class="form-select custom-input" id="sexo" name="sexo" required>
+                  <option value="">Seleccionar</option>
+                  <option value="M">Masculino</option>
+                  <option value="F">Femenino</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label for="tel">Teléfono:</label>
+                <input class="form-control custom-input" type="tel" id="tel" name="tel" required>
+              </div>
+              <div class="col-md-4">
+                <label for="mail">Correo electrónico:</label>
+                <input class="form-control custom-input" type="email" id="mail" name="mail" required>
+              </div>
+              <div class="col-md-4">
+                <label for="rol">Rol:</label>
+                <select class="form-select custom-input" id="rol" name="rol" required>
+                  <option value="">Seleccionar</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label for="pais">País:</label>
+                <select class="form-select custom-input" id="pais" name="pais" required>
+                  <option value="México">México</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label for="estado">Estado:</label>
+                <select class="form-select custom-input" id="estado" name="estado" required>
+                  <option value="Tabasco">Tabasco</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label for="idcolonia">Colonia:</label>
+                <input class="form-control custom-input" type="text" id="idcolonia" name="idcolonia" required>
+              </div>
+              <div class="col-md-4">
+                <label for="calle">Calle:</label>
+                <input class="form-control custom-input" type="text" id="calle" name="calle" required>
+              </div>
+              <div class="col-md-4">
+                <label for="numero">Número de calle:</label>
+                <input class="form-control custom-input" type="text" id="numero" name="numero" required>
+              </div>
+            </div>
+            <div class="text-center mt-4">
+              <button type="submit" class="btn btn-warning fw-bold px-5 py-2 rounded-pill">Guardar</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Datos del empleado -->
+        <div class="tab-pane fade" id="datos-empleado" role="tabpanel">
+          <form action="/registrarde" method="POST">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label for="rfc">RFC:</label>
+                <input class="form-control custom-input" type="text" id="rfc" name="rfc" required>
+              </div>
+              <div class="col-md-4">
+                <label for="idpuesto">Puesto:</label>
+                <select class="form-select custom-input" id="idpuesto" name="idpuesto" required>
+                  <option value="">Seleccionar</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label for="idsucursal">Sucursal:</label>
+                <select class="form-select custom-input" id="idsucursal" name="idsucursal" required>
+                  <option value="">Seleccionar</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label for="fechcon">Fecha de contratación:</label>
+                <input class="form-control custom-input" type="date" id="fechcon" name="fechcon" required>
+              </div>
+              <div class="col-md-4">
+                <label for="sueldo">Sueldo:</label>
+                <input class="form-control custom-input" type="text" id="sueldo" name="sueldo" required>
+              </div>
+              <div class="col-md-4">
+                <label for="turno">Turno:</label>
+                <input class="form-control custom-input" type="text" id="turno" name="turno" required>
+              </div>
+              <div class="col-12">
+                <h6 class="fw-bold mt-3">Credenciales</h6>
+              </div>
+              <div class="col-md-6">
+                <label for="usuario">Usuario:</label>
+                <input class="form-control custom-input" type="text" id="usuario" name="usuario" required>
+              </div>
+              <div class="col-md-6">
+                <label for="password">Contraseña:</label>
+                <input class="form-control custom-input" type="password" id="password" name="password" required>
+              </div>
+            </div>
+            <div class="text-center mt-4">
+              <button type="submit" class="btn btn-warning fw-bold px-5 py-2 rounded-pill">Registrar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="footer-wave"></div>
+  <footer class="footer-content text-center p-4">
+    <p></p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

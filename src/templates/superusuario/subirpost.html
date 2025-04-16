@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SISCATP - Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../style.css" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</head>
+
+<body>
+
+    <div class="sidebar d-none d-lg-block">
+        <a href="#"><ion-icon name="grid-outline"></ion-icon> Dashboard</a>
+        <a href="#"><ion-icon name="people-outline"></ion-icon> Compañias</a>
+        <a href="#"><ion-icon name="cube-outline"></ion-icon> Métricas</a>
+    </div>
+
+    <header class="topbar">
+        <button class="btn text-white d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+            <ion-icon name="menu-outline" size="large"></ion-icon>
+        </button>
+        <a href="#" class="d-flex align-items-center text-white text-decoration-none">
+            <img src="/imagen/siscatp blanco.png" alt="Logo SISCATP" width="40" height="30" class="me-2">
+            <h4 class="mb-0">SISCATP</h4>
+        </a>
+        <div class="user-info ms-auto dropdown">
+            <span class="d-none d-lg-inline mb-0">bienvenido, Márquez</span>
+            <a class="text-white ms-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <ion-icon name="person"></ion-icon>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    <h6 class="dropdown-header">Márquez</h6>
+                </li>
+                <li><a class="dropdown-item" href="">Cerrar sesión</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="mobileMenu">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">SISCATP</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+            <a href="#" class="d-block px-3 py-2"><ion-icon name="grid-outline"></ion-icon> Dashboard</a>
+            <a href="#" class="d-block px-3 py-2"><ion-icon name="people-outline"></ion-icon> Empleados</a>
+            <a href="#" class="d-block px-3 py-2"><ion-icon name="cube-outline"></ion-icon> Productos</a>
+        </div>
+    </div>
+
+    <main class="main-content">
+        <h5 class="fw-bold text-orange mb-4">Publicar en redes sociales</h5>
+      
+        <div class="bg-white p-4 rounded-4 shadow-sm mb-5">
+          <form action="/registrar_post.php" method="POST" enctype="multipart/form-data">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="titulo">Título:</label>
+                <input type="text" class="form-control custom-input" id="titulo" name="titulo" required>
+              </div>
+              <div class="col-md-6">
+                <label for="categoria">Categoría:</label>
+                <select class="form-select custom-input" id="categoria" name="categoria" required>
+                  <option value="">Seleccionar</option>
+                  <option value="noticia">Noticia</option>
+                  <option value="aviso">Aviso</option>
+                  <option value="evento">Evento</option>
+                </select>
+              </div>
+              <div class="col-md-12">
+                <label for="contenido">Contenido:</label>
+                <textarea class="form-control custom-input" id="contenido" name="contenido" rows="4" required></textarea>
+              </div>
+              <div class="col-md-6">
+                <label for="rutimg">Imagen (opcional):</label>
+                <input type="file" class="form-control custom-input" id="rutimg" name="rutimg" accept="image/*">
+              </div>
+              <div class="col-md-6">
+                <label for="rfcusuario">RFC del usuario:</label>
+                <input type="text" class="form-control custom-input" id="rfcusuario" name="rfcusuario" required>
+              </div>
+              <input type="hidden" name="fecha" value="<?= date('Y-m-d') ?>">
+              <input type="hidden" name="hora" value="<?= date('H:i:s') ?>">
+              <input type="hidden" name="activo" value="1">
+            </div>
+            <div class="text-center mt-4">
+              <button type="submit" class="btn btn-warning fw-bold px-5 py-2 rounded-pill">Publicar</button>
+            </div>
+          </form>
+        </div>
+      
+        <!-- Aquí se podría mostrar el historial de publicaciones -->
+      </main>
+      
+
+    <div class="footer-wave"></div>
+    <footer class="footer-content text-center p-4">
+        <p></p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
