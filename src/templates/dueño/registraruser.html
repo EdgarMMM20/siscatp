@@ -1,147 +1,207 @@
-
 {% extends 'superuser/dashboard.html' %}
 
 {% block content %}
-  <main class="main-content">
-    <div class="container">
-      <h5 class="section-title mb-3">Registro de empleados</h5>
+<main class="main-content">
+  <div class="container">
+    <h5 class="section-title mb-3">Registro de empleados</h5>
 
-      <!-- Tabs de navegación -->
-      <ul class="nav nav-pills mb-3 tab-nav rounded-pill px-2 py-1 justify-content-center" id="pills-tab"
-        role="tablist">
-        <li class="nav-item" role="presentation">
-          <button class="nav-link active rounded-pill px-4" id="tab-personal" data-bs-toggle="pill"
-            data-bs-target="#datos-personales" type="button" role="tab">datos personales</button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link rounded-pill px-4" id="tab-empleado" data-bs-toggle="pill"
-            data-bs-target="#datos-empleado" type="button" role="tab">datos del empleado</button>
-        </li>
-      </ul>
+    <!-- Tabs de navegación -->
+    <ul class="nav nav-pills mb-3 tab-nav rounded-pill px-2 py-1 justify-content-center" id="pills-tab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active rounded-pill px-4" id="tab-personal" data-bs-toggle="pill"
+          data-bs-target="#datos-personales" type="button" role="tab">datos personales</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link rounded-pill px-4" id="tab-empleado" data-bs-toggle="pill"
+          data-bs-target="#datos-empleado" type="button" role="tab">datos del empleado</button>
+      </li>
+    </ul>
 
-      <!-- Contenido de las pestañas -->
-      <div class="tab-content bg-white p-4 rounded-4 shadow-sm" id="pills-tabContent">
+    <!-- Contenido de las pestañas -->
+    <div class="tab-content bg-white p-4 rounded-4 shadow-sm" id="pills-tabContent">
 
-        <!-- Datos personales -->
-        <div class="tab-pane fade show active" id="datos-personales" role="tabpanel">
-          <form action="/registrardp" method="POST">
-            <div class="row g-3">
-              <div class="col-md-4">
-                <label for="rfc">RFC:</label>
-                <input class="form-control custom-input" type="text" id="rfc" name="rfc" required>
-              </div>
-              <div class="col-md-4">
-                <label for="nombre">Nombre:</label>
-                <input class="form-control custom-input" type="text" id="nombre" name="nombre" required>
-              </div>
-              <div class="col-md-4">
-                <label for="app">Apellido paterno:</label>
-                <input class="form-control custom-input" type="text" id="app" name="app" required>
-              </div>
-              <div class="col-md-4">
-                <label for="sexo">Sexo:</label>
-                <select class="form-select custom-input" id="sexo" name="sexo" required>
-                  <option value="">Seleccionar</option>
-                  <option value="M">Masculino</option>
-                  <option value="F">Femenino</option>
-                </select>
-              </div>
-              <div class="col-md-4">
-                <label for="tel">Teléfono:</label>
-                <input class="form-control custom-input" type="tel" id="tel" name="tel" required>
-              </div>
-              <div class="col-md-4">
-                <label for="mail">Correo electrónico:</label>
-                <input class="form-control custom-input" type="email" id="mail" name="mail" required>
-              </div>
-              <div class="col-md-4">
-                <label for="rol">Rol:</label>
-                <select class="form-select custom-input" id="rol" name="rol" required>
-                  <option value="">Seleccionar</option>
-                </select>
-              </div>
-              <div class="col-md-4">
-                <label for="pais">País:</label>
-                <select class="form-select custom-input" id="pais" name="pais" required>
-                  <option value="México">México</option>
-                </select>
-              </div>
-              <div class="col-md-4">
-                <label for="estado">Estado:</label>
-                <select class="form-select custom-input" id="estado" name="estado" required>
-                  <option value="Tabasco">Tabasco</option>
-                </select>
-              </div>
-              <div class="col-md-4">
-                <label for="idcolonia">Colonia:</label>
-                <input class="form-control custom-input" type="text" id="idcolonia" name="idcolonia" required>
-              </div>
-              <div class="col-md-4">
-                <label for="calle">Calle:</label>
-                <input class="form-control custom-input" type="text" id="calle" name="calle" required>
-              </div>
-              <div class="col-md-4">
-                <label for="numero">Número de calle:</label>
-                <input class="form-control custom-input" type="text" id="numero" name="numero" required>
-              </div>
+      <!-- Datos personales -->
+      <div class="tab-pane fade show active" id="datos-personales" role="tabpanel">
+        <form id="regForm" action="/registrardp" method="POST">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label for="rfc">RFC:</label>
+              <input class="form-control custom-input" type="text" id="rfc" name="rfc" required>
             </div>
-            <div class="text-center mt-4">
-              <button type="submit" class="btn btn-warning fw-bold px-5 py-2 rounded-pill">Guardar</button>
+            <div class="col-md-4">
+              <label for="nombre">Nombre:</label>
+              <input class="form-control custom-input" type="text" id="nombre" name="nombre" required>
             </div>
-          </form>
-        </div>
+            <div class="col-md-4">
+              <label for="app">Apellido paterno:</label>
+              <input class="form-control custom-input" type="text" id="app" name="app" required>
+            </div>
+            <div class="col-md-4">
+              <label for="sexo">Sexo:</label>
+              <select class="form-select custom-input" id="sexo" name="sexo" required>
+                <option value="">Seleccionar</option>
+                <option value="M">Masculino</option>
+                <option value="F">Femenino</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label for="tel">Teléfono:</label>
+              <input class="form-control custom-input" type="tel" id="tel" name="tel" required>
+            </div>
+            <div class="col-md-4">
+              <label for="mail">Correo electrónico:</label>
+              <input class="form-control custom-input" type="email" id="mail" name="mail" required>
+            </div>
+            <div class="col-md-4">
+              <label for="rol">Rol:</label>
+              <select class="form-select custom-input" id="rol" name="rol" required>
+                <option value="">Seleccionar</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label for="pais">País:</label>
+              <select class="form-select custom-input" id="pais" name="pais" required>
+                <option value="México">México</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label for="estado">Estado:</label>
+              <select class="form-select custom-input" id="estado" name="estado" required>
+                <option value="Tabasco">Tabasco</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label for="idcolonia">Colonia:</label>
+              <input class="form-control custom-input" type="text" id="idcolonia" name="idcolonia" required>
+            </div>
+            <div class="col-md-4">
+              <label for="calle">Calle:</label>
+              <input class="form-control custom-input" type="text" id="calle" name="calle" required>
+            </div>
+            <div class="col-md-4">
+              <label for="numero">Número de calle:</label>
+              <input class="form-control custom-input" type="text" id="numero" name="numero" required>
+            </div>
+          </div>
+          <div class="text-center mt-4">
+            <button type="submit" class="btn btn-warning fw-bold px-5 py-2 rounded-pill">Guardar</button>
+          </div>
+        </form>
+      </div>
 
-        <!-- Datos del empleado -->
-        <div class="tab-pane fade" id="datos-empleado" role="tabpanel">
-          <form action="/registrarde" method="POST">
-            <div class="row g-3">
-              <div class="col-md-4">
-                <label for="rfc">RFC:</label>
-                <input class="form-control custom-input" type="text" id="rfc" name="rfc" required>
-              </div>
-              <div class="col-md-4">
-                <label for="idpuesto">Puesto:</label>
-                <select class="form-select custom-input" id="idpuesto" name="idpuesto" required>
-                  <option value="">Seleccionar</option>
-                </select>
-              </div>
-              <div class="col-md-4">
-                <label for="idsucursal">Sucursal:</label>
-                <select class="form-select custom-input" id="idsucursal" name="idsucursal" required>
-                  <option value="">Seleccionar</option>
-                </select>
-              </div>
-              <div class="col-md-4">
-                <label for="fechcon">Fecha de contratación:</label>
-                <input class="form-control custom-input" type="date" id="fechcon" name="fechcon" required>
-              </div>
-              <div class="col-md-4">
-                <label for="sueldo">Sueldo:</label>
-                <input class="form-control custom-input" type="text" id="sueldo" name="sueldo" required>
-              </div>
-              <div class="col-md-4">
-                <label for="turno">Turno:</label>
-                <input class="form-control custom-input" type="text" id="turno" name="turno" required>
-              </div>
-              <div class="col-12">
-                <h6 class="fw-bold mt-3">Credenciales</h6>
-              </div>
-              <div class="col-md-6">
-                <label for="usuario">Usuario:</label>
-                <input class="form-control custom-input" type="text" id="usuario" name="usuario" required>
-              </div>
-              <div class="col-md-6">
-                <label for="password">Contraseña:</label>
-                <input class="form-control custom-input" type="password" id="password" name="password" required>
-              </div>
+      <!-- Datos del empleado -->
+      <div class="tab-pane fade" id="datos-empleado" role="tabpanel">
+        <form action="/registrarde" method="POST">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label for="rfc">RFC:</label>
+              <input class="form-control custom-input" type="text" id="rfc" name="rfc" required>
             </div>
-            <div class="text-center mt-4">
-              <button type="submit" class="btn btn-warning fw-bold px-5 py-2 rounded-pill">Registrar</button>
+            <div class="col-md-4">
+              <label for="idpuesto">Puesto:</label>
+              <select class="form-select custom-input" id="idpuesto" name="idpuesto" required>
+                <option value="">Seleccionar</option>
+              </select>
             </div>
-          </form>
-        </div>
+            <div class="col-md-4">
+              <label for="idsucursal">Sucursal:</label>
+              <select class="form-select custom-input" id="idsucursal" name="idsucursal" required>
+                <option value="">Seleccionar</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label for="fechcon">Fecha de contratación:</label>
+              <input class="form-control custom-input" type="date" id="fechcon" name="fechcon" required>
+            </div>
+            <div class="col-md-4">
+              <label for="sueldo">Sueldo:</label>
+              <input class="form-control custom-input" type="text" id="sueldo" name="sueldo" required>
+            </div>
+            <div class="col-md-4">
+              <label for="turno">Turno:</label>
+              <input class="form-control custom-input" type="text" id="turno" name="turno" required>
+            </div>
+            <div class="col-12">
+              <h6 class="fw-bold mt-3">Credenciales</h6>
+            </div>
+            <div class="col-md-6">
+              <label for="usuario">Usuario:</label>
+              <input class="form-control custom-input" type="text" id="usuario" name="usuario" required>
+            </div>
+            <div class="col-md-6">
+              <label for="password">Contraseña:</label>
+              <input class="form-control custom-input" type="password" id="password" name="password" required>
+            </div>
+          </div>
+          <div class="text-center mt-4">
+            <button type="submit" class="btn btn-warning fw-bold px-5 py-2 rounded-pill">Registrar</button>
+          </div>
+        </form>
       </div>
     </div>
-  </main>
+  </div>
+</main>
 
-  {% endblock %}
+<script>
+  function addSwalAlertCre(id, endpoint) {
+    const form = document.getElementById(id);
+    if (!form) {
+      console.error("Formulario con ID", id, "no encontrado");
+      return;
+    }
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      let formData = new FormData(this);
+
+      fetch(endpoint, {
+        method: "POST",
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            Swal.fire({
+              title: "Registro exitoso",
+              text: data.msg || "Operación completada con éxito",
+              icon: "success",
+              confirmButtonText: "Aceptar"
+            }).then(() => {
+              // Avanzar barra de progreso y cambiar de pestaña
+              const progressBar = document.getElementById('progress-bar');
+              if (progressBar) {
+                progressBar.style.width = '100%';
+                progressBar.textContent = 'Paso 2 de 2';
+              }
+              var triggerEl = document.querySelector('#tab-empleado');
+              if (triggerEl) {
+                bootstrap.Tab.getOrCreateInstance(triggerEl).show();
+              }
+            });
+          } else {
+            Swal.fire({
+              title: "Error",
+              text: data.error || "Ocurrió un error inesperado",
+              icon: "error",
+              confirmButtonText: "Aceptar"
+            });
+          }
+        })
+        .catch(error => {
+          Swal.fire({
+            title: "Error de conexión",
+            text: "No se pudo conectar con el servidor",
+            icon: "error",
+            confirmButtonText: "Aceptar"
+          });
+        });
+    });
+  }
+
+  // Inicializar el manejador de formularios si existe
+  if (document.getElementById("regForm")) {
+    addSwalAlertCre("regForm", "/registrardp");
+  }
+</script>
+{% endblock %}

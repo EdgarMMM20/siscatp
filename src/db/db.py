@@ -32,6 +32,6 @@ def connect_to_database():
 
 def get_db():
     connection = connect_to_database()
-    if connection:+
+    if connection:
         connection.autocommit = True
     return connection
