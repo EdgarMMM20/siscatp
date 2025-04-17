@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
 </head>
 
 <body>
@@ -59,7 +61,7 @@
             <a href="#" class="d-block px-3 py-2"><ion-icon name="settings-outline"></ion-icon> Ajuste</a>
         </div>
     </div>
-{% block content %}
+    {% block content %}
     <main class="main-content">
         <div class="row g-4">
             <div class="col-md-3">
@@ -127,7 +129,7 @@
             </div>
         </div>
     </main>
-{% endblock %}
+    {% endblock %}
     <div class="footer-wave"></div>
     <footer class="footer-content text-center p-4">
         <p></p>
