@@ -14,7 +14,7 @@ def register_person():
 
         # Validar campos requeridos
         required_fields = [
-            "rfc", "nombre", "app", "apm", "sexo", "tel", "mail", "rol",
+            "rfc", "nombre", "app", "apm", "sexo", "tel", "mail",
             "idcolonia", "calle", "numero", "usuario", "password"
         ]
         missing_fields = [field for field in required_fields if not request.form.get(field)]
@@ -28,7 +28,7 @@ def register_person():
         cursor.execute("SELECT rfc from usuario WHERE rfc= %s", (request.form.get("rfc"),))
         if cursor.fetchone():
             return jsonify({"error": "El rfc ya existe en la tabla usuario"}), 400
-
+        rdef= 1
         # Insertar persona
         querypersona = """
             INSERT INTO persona (rfc, nombre, app, apm, sexo, tel, mail, rol, idcolonia, calle, numero) 
@@ -37,7 +37,7 @@ def register_person():
         cursor.execute(querypersona, (
             request.form.get("rfc"), request.form.get("nombre"), request.form.get("app"),
             request.form.get("apm"), request.form.get("sexo"), request.form.get("tel"),
-            request.form.get("mail"), request.form.get("rol"), request.form.get("idcolonia"),
+            request.form.get("mail"), rdef, request.form.get("idcolonia"),
             request.form.get("calle"), request.form.get("numero"),
         ))
 
