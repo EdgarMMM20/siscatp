@@ -1,0 +1,47 @@
+{% extends 'capturista/dashboard.html' %}
+
+{% block content %}
+<main class="main-content">
+  <div class="bg-white p-4 rounded-4 shadow-sm">
+    <h5 class="fw-bold mb-4">Registrar Zona de Almacén</h5>
+
+    <form action="/registrarzal" method="POST">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label for="nombre">Nombre de la zona:</label>
+          <input class="form-control custom-input" type="text" id="nombre" name="nombre" required>
+        </div>
+
+        <div class="col-md-4">
+          <label for="coloreqt">Color de etiqueta (riesgo o categoría visual):</label>
+          <select class="form-select custom-input" id="coloreqt" name="coloreqt" required>
+            <option value="">Seleccionar color</option>
+            <option value="verde">Verde - Bajo riesgo</option>
+            <option value="amarillo">Amarillo - Riesgo medio</option>
+            <option value="rojo">Rojo - Riesgo alto</option>
+            <option value="azul">Azul - General</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label for="idsucursal">Sucursal:</label>
+          <select class="form-select custom-input" id="idsucursal" name="idsucursal" required>
+            <option value="">Seleccionar sucursal</option>
+            <!-- Opciones dinámicas desde la BD -->
+          </select>
+        </div>
+
+        <div class="col-md-12">
+          <label for="descripcion">Descripción:</label>
+          <textarea class="form-control custom-input" id="descripcion" name="descripcion" rows="3"
+            placeholder="Describe la zona de almacén..." required></textarea>
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+        <button type="submit" class="btn btn-warning fw-bold px-5 py-2 rounded-pill">Registrar</button>
+      </div>
+    </form>
+  </div>
+</main>
+{% endblock %}

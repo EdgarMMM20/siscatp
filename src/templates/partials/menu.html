@@ -1,0 +1,64 @@
+{# templates/partials/menu.html #}
+{% set idrol = session.get('rol') %}
+{% set usuario_nombre = session.get('usuario_nombre', 'Usuario') %}
+{% set base_menu = [] %}
+
+{% if idrol == '0' %}
+    {% set base_menu = [
+        {'href': '/dashboard/superuser/principal', 'icon': 'grid-outline', 'label': 'Dashboard'},
+        {'href': '/dashboard/superuser/gestionuser', 'icon': 'people-outline', 'label': 'Compañías y dueños'},
+        {'href': '/dashboard/capturista/registrarpro', 'icon': 'cube-outline', 'label': 'Productos'},
+        {'href': '/dashboard/superuser/metricas', 'icon': 'bar-chart-outline', 'label': 'Métricas'},
+        {'href': '/dashboard/superuser/subirpost', 'icon': 'logo-facebook', 'label': 'Subir post'},
+        {'href': '#', 'icon': 'settings-outline', 'label': 'Ajuste'}
+    ] %}
+{% elif idrol == '4' %}
+    {% set base_menu = [
+        {'href': '/dashboard/capturista/registrarpro', 'icon': 'cube-outline', 'label': 'Productos'}
+    ] %}
+{% endif %}
+
+<!-- Sidebar (pantallas grandes) -->
+<div class="sidebar d-none d-lg-block">
+    {% for item in base_menu %}
+        <a href="{{ item.href }}"><ion-icon name="{{ item.icon }}"></ion-icon> {{ item.label }}</a>
+    {% endfor %}
+</div>
+
+<!-- Encabezado superior -->
+<header class="topbar">
+    <button class="btn text-white d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+        <ion-icon name="menu-outline" size="large"></ion-icon>
+    </button>
+    <a href="#" class="d-flex align-items-center text-white text-decoration-none">
+        <img src="{{ url_for('static', filename='img/siscatp blanco.png') }}" alt="Logo SISCATP" width="40"
+             height="30" class="me-2" />
+        <h4 class="mb-0">SISCATP</h4>
+    </a>
+    <div class="user-info ms-auto dropdown">
+        <span class="d-none d-lg-inline mb-0">Bienvenido, {{ usuario_nombre }}</span>
+        <a class="text-white ms-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <ion-icon name="person"></ion-icon>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li><h6 class="dropdown-header">{{ usuario_nombre }}</h6></li>
+            <li><a class="dropdown-item" href="/logout">Cerrar sesión</a></li>
+        </ul>
+    </div>
+</header>
+
+<!-- Menú móvil -->
+<div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="mobileMenu">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">SISCATP</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+        {% for item in base_menu %}
+            <a href="{{ item.href }}" class="sidebar-link d-block">
+                <ion-icon name="{{ item.icon }}"></ion-icon> {{ item.label }}
+            </a>
+        {% endfor %}
+    </div>
+</div>
+

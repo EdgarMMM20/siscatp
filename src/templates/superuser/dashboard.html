@@ -14,14 +14,7 @@
 </head>
 
 <body>
-    <div class="sidebar d-none d-lg-block">
-        <a href="#"><ion-icon name="grid-outline"></ion-icon> Dashboard</a>
-        <a href="/dashboard/superuser/gestionuser"><ion-icon name="people-outline"></ion-icon> Compañías y dueños</a>
-        <a href="#"><ion-icon name="cube-outline"></ion-icon> Usuarios</a>
-        <a href="#"><ion-icon name="bar-chart-outline"></ion-icon> Reportes</a>
-        <a href="#"><ion-icon name="search-outline"></ion-icon> Buscar compañía</a>
-        <a href="#"><ion-icon name="settings-outline"></ion-icon> Ajustes</a>
-    </div>
+    {% include 'partials/menu.html' %}
 
     <header class="topbar">
         <button class="btn text-white d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
