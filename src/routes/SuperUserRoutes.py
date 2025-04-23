@@ -1,13 +1,17 @@
-from flask import Blueprint, request, jsonify, session
-
+from flask import Blueprint, request, jsonify, session, render_template, redirect, url_for, flash
 # from flask_jwt_extended import jwt_required
 from db.db import *
+import os
+from datetime import datetime
 
 BP_SuperUserRoutes = Blueprint("BP_SuperUserRoutes", __name__)
 
 
 @BP_SuperUserRoutes.route("/registerperson", methods=["POST"])
 def register_person():
+    fech = datetime.now().date()
+    rdef= 1
+
     try:
         conn = get_db()
         cursor = conn.cursor()
@@ -28,17 +32,17 @@ def register_person():
         cursor.execute("SELECT rfc from usuario WHERE rfc= %s", (request.form.get("rfc"),))
         if cursor.fetchone():
             return jsonify({"error": "El rfc ya existe en la tabla usuario"}), 400
-        rdef= 1
+        
         # Insertar persona
         querypersona = """
-            INSERT INTO persona (rfc, nombre, app, apm, sexo, tel, mail, rol, idcolonia, calle, numero) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO persona (rfc, nombre, app, apm, sexo, tel, mail, rol, idcolonia, calle, numero, fechregis) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
         cursor.execute(querypersona, (
             request.form.get("rfc"), request.form.get("nombre"), request.form.get("app"),
             request.form.get("apm"), request.form.get("sexo"), request.form.get("tel"),
             request.form.get("mail"), rdef, request.form.get("idcolonia"),
-            request.form.get("calle"), request.form.get("numero"),
+            request.form.get("calle"), request.form.get("numero"), fech,
         ))
 
         # Insertar usuario
@@ -123,7 +127,7 @@ def register_company():
             (
                 request.form.get("rfccomp"),
                 request.form.get("nombre"),
-                logo_path,
+                logo_db_path,
                 request.form.get("telefono"),
                 request.form.get("idcolonia"),
                 request.form.get("calle"),
@@ -154,3 +158,79 @@ def register_company():
         if "conn" in locals() and conn:
             conn.close()
                 
+@BP_SuperUserRoutes.route("/gestionuser", methods=["GET"])
+def mostrar_dueños():
+    try:
+        conn = get_db()
+        cursor = conn.cursor(dictionary=True)
+
+        # CONSULTA PARA OBTENER LA LISTA DE DUEÑOS
+        query= """SELECT p.rfc, p.nombre, p.app, p.apm, p.tel, p.mail, p.rol, p.fechregis, u.activo
+        FROM persona p 
+        JOIN usuario u ON p.rfc = u.rfc WHERE p.rol = "1" """
+
+        filters = []  # Lista para almacenar condiciones WHERE
+        params = []   # Lista para los parámetros de la consulta
+
+        # FILTRO SI EL USUARIO ESCRIBIO EN EL BUSCADOR
+        rfc= request.args.get('obrfc')
+        if rfc:
+            filters.append("p.rfc LIKE%s")
+            params.append(f"%{rfc}%")
+
+        # Filtro por estado según el select
+        filtro = request.args.get('filtro')
+
+        # Si no hay filtro seleccionado, por defecto muestra solo activos
+        if  filtro ==  "activos" or (filtro is None):
+            filters.append("u.activo=1")
+        elif filtro == "inactivos":
+            filters.append("u.activo=0")
+        elif filtro == "recientes":
+            filters.append("p.fechregis >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY)")
+    
+        
+        # Si hay filtros, agrégalos a la consulta base
+        if filters:
+            query += " AND " + " AND ".join(filters)
+        # Ordena por fecha de registro descendente (más recientes arriba)
+        query += " ORDER BY p.fechregis DESC"
+        
+        # Ejecutar la consulta con los parametros
+        cursor.execute(query, tuple(params))
+        dueños = cursor.fetchall()
+        return render_template('superuser/gestionuser.html', dueños=dueños), 200
+    except Exception as e:
+        return f"{str(e)}", 500
+    finally:
+        if "cursor" in locals() and cursor:
+            cursor.close()
+        if "conn" in locals() and conn:
+            conn.close()
+
+@BP_SuperUserRoutes.route('/toggle_estado_dueño/<rfc>', methods=["POST"])
+def toggle_estado_dueño(rfc):
+    try:
+        conn = get_db()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT activo FROM usuario WHERE rfc=%s", (rfc,))
+        usuario = cursor.fetchone()
+        if usuario:
+            new_state = 0 if usuario["activo"] == 1 else 1
+            cursor.execute("UPDATE usuario SET activo = %s WHERE rfc = %s", (new_state, rfc))
+            conn.commit()
+            if new_state == 1:
+                flash("Dueño reactivado exitosamente.", "success")
+            else:
+                flash("Dueño dado de baja exitosamente.", "warning")
+        else:
+            flash("No se encontró el usuario especificado.", "danger")
+    except Exception as e:
+        flash(f"Error al actualizar el estado: {str(e)}", "danger")
+    finally:
+        if "cursor" in locals() and cursor:
+            cursor.close()
+        if "conn" in locals() and conn:
+            conn.close()
+    return redirect(url_for('BP_SuperUserRoutes.mostrar_dueños'))
+

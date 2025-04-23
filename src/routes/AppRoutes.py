@@ -19,15 +19,13 @@ def dashboard_superuser():
 
 @app_routes.route('/dashboard/superuser/gestionuser') 
 def dashboard_superuser_gestionuser():
-    return render_template('superuser/gestionuser.html')
+    return redirect(url_for('BP_SuperUserRoutes.mostrar_dueños'))
 
 @app_routes.route('/dashboard/superuser/register')
 def dashboard_superuser_register():
     return render_template('superuser/registraruser.html')
 
-@app_routes.route('/dashboard/superuser/company')
-def dashboard_superuser_company():
-    return render_template('superuser/company.html')
+
 
 
 

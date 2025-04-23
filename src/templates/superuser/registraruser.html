@@ -5,196 +5,211 @@
 {% endblock %}
 {% block content %}
 <main class="main-content">
-  <div class="card shadow">
-      <div class="card-header bg-color text-white">
-          <h4 class="mb-0">Registro de Dueño y Compañía</h4>
-      </div>
-      <div class="card-body">
-          <!-- Barra de progreso -->
-          <div class="progress mb-4">
-              <div id="progress-bar" class="progress-bar barra" role="progressbar" style="width: 50%"
-                  aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">Paso 1 de 2</div>
-          </div>
+    <div class="card shadow">
+        <div class="card-header bg-color text-white">
+            <h4 class="mb-0">Registro de Dueño y Compañía</h4>
+        </div>
+        <div class="card-body">
+            <!-- Barra de progreso -->
+            <div class="progress mb-4">
+                <div id="progress-bar" class="progress-bar barra" role="progressbar" style="width: 50%"
+                    aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">Paso 1 de 2</div>
+            </div>
 
-          <!-- Mensajes flash -->
-          {% with messages = get_flashed_messages(with_categories=true) %}
-              {% if messages %}
-                  {% for category, message in messages %}
-                      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                          {{ message }}
-                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                      </div>
-                  {% endfor %}
-              {% endif %}
-          {% endwith %}
+            <!-- Mensajes flash -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
 
-          <!-- Pestañas de navegación -->
-          <ul class="nav nav-tabs" id="formTabs" role="tablist">
-              <li class="nav-item" role="presentation">
-                  <button class="nav-link active rounded-pill px-4" id="tab-personal" data-bs-toggle="pill"
-                      data-bs-target="#datos-personales" type="button" role="tab">Datos personales</button>
-              </li>
-              <li class="nav-item" role="presentation">
-                  <button class="nav-link rounded-pill px-4 mb-1" id="tab-compania" data-bs-toggle="pill"
-                      data-bs-target="#datos-compania" type="button" role="tab">Datos de la compañía</button>
-              </li>
-          </ul>
+            <!-- Pestañas de navegación -->
+            <ul class="nav nav-tabs" id="formTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active rounded-pill px-4" id="tab-personal" data-bs-toggle="pill"
+                        data-bs-target="#datos-personales" type="button" role="tab">Datos personales</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link rounded-pill px-4 mb-1" id="tab-compania" data-bs-toggle="pill"
+                        data-bs-target="#datos-compania" type="button" role="tab">Datos de la compañía</button>
+                </li>
+            </ul>
 
-          <!-- Contenido de las pestañas -->
-          <div class="tab-content bg-white p-4 rounded-4 shadow-sm" id="pills-tabContent">
-              <!-- Datos personales -->
-              <div class="tab-pane fade show active" id="datos-personales" role="tabpanel">
-                  <form id="ownerForm" action="/registerperson" method="POST">
-                      <div class="row g-3">
-                          <div class="col-md-4">
-                              <label for="owner_rfc" class="form-label">RFC:</label>
-                              <input class="form-control custom-input" type="text" id="owner_rfc" name="rfc" required>
-                          </div>
-                          <div class="col-md-4">
-                              <label for="owner_nombre" class="form-label">Nombre:</label>
-                              <input class="form-control custom-input" type="text" id="owner_nombre" name="nombre" required>
-                          </div>
-                          <div class="col-md-4">
-                              <label for="owner_app" class="form-label">Apellido paterno:</label>
-                              <input class="form-control custom-input" type="text" id="owner_app" name="app" required>
-                          </div>
-                          <div class="col-md-4">
-                              <label for="owner_apm" class="form-label">Apellido materno:</label>
-                              <input class="form-control custom-input" type="text" id="owner_apm" name="apm" required>
-                          </div>
-                          <div class="col-md-4">
-                              <label for="owner_sexo" class="form-label">Sexo:</label>
-                              <select class="form-select custom-input" id="owner_sexo" name="sexo" required>
-                                  <option value="" disabled selected>Seleccionar</option>
-                                  <option value="M">Masculino</option>
-                                  <option value="F">Femenino</option>
-                              </select>
-                          </div>
-                          <div class="col-md-4">
-                              <label for="owner_tel" class="form-label">Teléfono:</label>
-                              <input class="form-control custom-input" type="tel" id="owner_tel" name="tel" required>
-                          </div>
-                          <div class="col-md-4">
-                              <label for="owner_mail" class="form-label">Correo electrónico:</label>
-                              <input class="form-control custom-input" type="email" id="owner_mail" name="mail" required>
-                          </div>
+            <!-- Contenido de las pestañas -->
+            <div class="tab-content bg-white p-4 rounded-4 shadow-sm" id="pills-tabContent">
+                <!-- Datos personales -->
+                <div class="tab-pane fade show active" id="datos-personales" role="tabpanel">
+                    <form id="ownerForm" action="/registerperson" method="POST">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="owner_rfc" class="form-label">RFC:</label>
+                                <input class="form-control custom-input" type="text" id="owner_rfc" name="rfc" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="owner_nombre" class="form-label">Nombre:</label>
+                                <input class="form-control custom-input" type="text" id="owner_nombre" name="nombre"
+                                    required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="owner_app" class="form-label">Apellido paterno:</label>
+                                <input class="form-control custom-input" type="text" id="owner_app" name="app" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="owner_apm" class="form-label">Apellido materno:</label>
+                                <input class="form-control custom-input" type="text" id="owner_apm" name="apm" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="owner_sexo" class="form-label">Sexo:</label>
+                                <select class="form-select custom-input" id="owner_sexo" name="sexo" required>
+                                    <option value="" disabled selected>Seleccionar</option>
+                                    <option value="M">Masculino</option>
+                                    <option value="F">Femenino</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="owner_tel" class="form-label">Teléfono:</label>
+                                <input class="form-control custom-input" type="tel" id="owner_tel" name="tel" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="owner_mail" class="form-label">Correo electrónico:</label>
+                                <input class="form-control custom-input" type="email" id="owner_mail" name="mail"
+                                    required>
+                            </div>
 
-                          <div class="col-md-4">
-                              <label for="owner_paises" class="form-label">País:</label>
-                              <select class="form-select custom-input" id="owner_paises" name="paises" required
-                                  onchange="selectPais(event)">
-                                  <option value="" disabled selected>Selecciona el país</option>
-                              </select>
-                          </div>
-                          <div class="col-md-4">
-                              <label for="owner_estados" class="form-label">Estado:</label>
-                              <select class="form-select custom-input" id="owner_estados" name="estados" 
-                                  onchange="selectEstado(event)">
-                                  <option value="" disabled selected>Selecciona el estado</option>
-                              </select>
-                          </div>
-                          <div class="col-md-3">
-                              <label for="owner_municipios" class="form-label">Municipio:</label>
-                              <select class="form-select custom-input" id="owner_municipios" name="municipios" 
-                                  onchange="selectMunicipio(event)">
-                                  <option value="" disabled selected>Selecciona el municipio</option>
-                              </select>
-                          </div>
-                          <div class="col-md-3">
-                              <label for="owner_idcolonia" class="form-label">Colonia:</label>
-                              <select class="form-select custom-input" id="owner_idcolonia" name="idcolonia" 
-                                  >
-                                  <option value="" disabled selected>Selecciona la colonia</option>
-                              </select>
-                          </div>
-                          <div class="col-md-3">
-                              <label for="owner_calle" class="form-label">Calle:</label>
-                              <input class="form-control custom-input" type="text" id="owner_calle" name="calle" required>
-                          </div>
-                          <div class="col-md-3">
-                              <label for="owner_numero" class="form-label">Número de calle:</label>
-                              <input class="form-control custom-input" type="text" id="owner_numero" name="numero" required>
-                          </div>
-                          
-                          <div class="col-md-6">
-                              <label for="owner_usuario" class="form-label">Usuario:</label>
-                              <input class="form-control custom-input" type="text" id="owner_usuario" name="usuario" required>
-                          </div>
-                          <div class="col-md-6">
-                              <label for="owner_password" class="form-label">Contraseña:</label>
-                              <input class="form-control custom-input" type="password" id="owner_password" name="password" required>
-                          </div>
-                      </div>
-                      <div class="text-center mt-4">
-                          <button type="submit" class="btn btn-warning fw-bold px-5 py-2 rounded-pill">Guardar</button>
-                      </div>
-                  </form>
-              </div>
+                            <div class="col-md-4">
+                                <label for="owner_paises" class="form-label">País:</label>
+                                <select class="form-select custom-input" id="owner_paises" name="paises" required
+                                    onchange="selectPais(event)">
+                                    <option value="" disabled selected>Selecciona el país</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="owner_estados" class="form-label">Estado:</label>
+                                <select class="form-select custom-input" id="owner_estados" name="estados"
+                                    onchange="selectEstado(event)">
+                                    <option value="" disabled selected>Selecciona el estado</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="owner_municipios" class="form-label">Municipio:</label>
+                                <select class="form-select custom-input" id="owner_municipios" name="municipios"
+                                    onchange="selectMunicipio(event)">
+                                    <option value="" disabled selected>Selecciona el municipio</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="owner_idcolonia" class="form-label">Colonia:</label>
+                                <select class="form-select custom-input" id="owner_idcolonia" name="idcolonia">
+                                    <option value="" disabled selected>Selecciona la colonia</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="owner_calle" class="form-label">Calle:</label>
+                                <input class="form-control custom-input" type="text" id="owner_calle" name="calle"
+                                    required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="owner_numero" class="form-label">Número de calle:</label>
+                                <input class="form-control custom-input" type="text" id="owner_numero" name="numero"
+                                    required>
+                            </div>
 
-              <!-- Datos de la compañía -->
-              <div class="tab-pane fade" id="datos-compania" role="tabpanel">
-                  <form id="companyForm" action="/registrarcompany" method="POST" enctype="multipart/form-data">
-                      <div class="row g-3">
-                          <div class="col-md-4">
-                              <label for="comp_rfccomp" class="form-label">RFC de la compañía:</label>
-                              <input type="text" class="form-control custom-input" id="comp_rfccomp" name="rfccomp" required>
-                          </div>
-                          <div class="col-md-4">
-                              <label for="comp_nombre" class="form-label">Nombre:</label>
-                              <input type="text" class="form-control custom-input" id="comp_nombre" name="nombre" required>
-                          </div>
-                          <div class="col-md-4">
-                              <label for="comp_telefono" class="form-label">Teléfono:</label>
-                              <input type="text" class="form-control custom-input" id="comp_telefono" name="telefono" required>
-                          </div>
-                          <div class="col-md-4">
+                            <div class="col-md-6">
+                                <label for="owner_usuario" class="form-label">Usuario:</label>
+                                <input class="form-control custom-input" type="text" id="owner_usuario" name="usuario"
+                                    required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="owner_password" class="form-label">Contraseña:</label>
+                                <input class="form-control custom-input" type="password" id="owner_password"
+                                    name="password" required>
+                            </div>
+                        </div>
+                        <div class="text-center mt-4">
+                            <button type="submit"
+                                class="btn btn-warning fw-bold px-5 py-2 rounded-pill">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Datos de la compañía -->
+                <div class="tab-pane fade" id="datos-compania" role="tabpanel">
+                    <form id="companyForm" action="/registrarcompany" method="POST" enctype="multipart/form-data">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="comp_rfccomp" class="form-label">RFC de la compañía:</label>
+                                <input type="text" class="form-control custom-input" id="comp_rfccomp" name="rfccomp"
+                                    required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="comp_nombre" class="form-label">Nombre:</label>
+                                <input type="text" class="form-control custom-input" id="comp_nombre" name="nombre"
+                                    required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="comp_telefono" class="form-label">Teléfono:</label>
+                                <input type="text" class="form-control custom-input" id="comp_telefono" name="telefono"
+                                    required>
+                            </div>
+                            <div class="col-md-4">
                               <label for="comp_paises" class="form-label">País:</label>
-                              <select class="form-select custom-input" id="comp_paises" name="paises" required
-                                  onchange="selectPais(event)">
-                                  <option value="" disabled selected>Selecciona el país</option>
+                              <select class="form-select custom-input" id="comp_paises" name="paises" required onchange="selectPais(event)">
+                                <option value="" disabled selected>Selecciona el país</option>
+                                {% for idpais, nombre in paises %}
+                                  <option value="{{ idpais }}">{{ nombre }}</option>
+                                {% endfor %}
                               </select>
-                          </div>
-                          <div class="col-md-4">
-                              <label for="comp_estados" class="form-label">Estado:</label>
-                              <select class="form-select custom-input" id="comp_estados" name="estados" required
-                                  onchange="selectEstado(event)">
-                                  <option value="" disabled selected>Selecciona el estado</option>
-                              </select>
-                          </div>
-                          <div class="col-md-4">
-                              <label for="comp_municipios" class="form-label">Municipio:</label>
-                              <select class="form-select custom-input" id="comp_municipios" name="municipios" required
-                                  onchange="selectMunicipio(event)">
-                                  <option value="" disabled selected>Selecciona el municipio</option>
-                              </select>
-                          </div>
-                          <div class="col-md-4">
-                              <label for="comp_idcolonia" class="form-label">Colonia:</label>
-                              <select class="form-select custom-input" id="comp_idcolonia" name="idcolonia" required>
-                                  <option value="" disabled selected>Selecciona la colonia</option>
-                              </select>
-                          </div>
-                          <div class="col-md-4">
-                              <label for="comp_calle" class="form-label">Calle:</label>
-                              <input type="text" class="form-control custom-input" id="comp_calle" name="calle" required>
-                          </div>
-                          <div class="col-md-4">
-                              <label for="comp_numero" class="form-label">Número:</label>
-                              <input type="text" class="form-control custom-input" id="comp_numero" name="numero" required>
-                          </div>
-                          <div class="col-md-12">
-                              <label for="comp_logo" class="form-label">Logo:</label>
-                              <input type="file" class="form-control custom-input" id="comp_logo" name="logo" accept="image/*">
-                          </div>
-                      </div>
-                      <div class="text-center mt-4">
-                          <button type="submit" class="btn btn-warning fw-bold px-5 py-2 rounded-pill">Registrar</button>
-                      </div>
-                  </form>
-              </div>
-          </div>
-      </div>
-  </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="comp_estados" class="form-label">Estado:</label>
+                                <select class="form-select custom-input" id="comp_estados" name="estados" required
+                                    onchange="selectEstado(event)">
+                                    <option value="" disabled selected>Selecciona el estado</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="comp_municipios" class="form-label">Municipio:</label>
+                                <select class="form-select custom-input" id="comp_municipios" name="municipios" required
+                                    onchange="selectMunicipio(event)">
+                                    <option value="" disabled selected>Selecciona el municipio</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="comp_idcolonia" class="form-label">Colonia:</label>
+                                <select class="form-select custom-input" id="comp_idcolonia" name="idcolonia" required>
+                                    <option value="" disabled selected>Selecciona la colonia</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="comp_calle" class="form-label">Calle:</label>
+                                <input type="text" class="form-control custom-input" id="comp_calle" name="calle"
+                                    required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="comp_numero" class="form-label">Número:</label>
+                                <input type="text" class="form-control custom-input" id="comp_numero" name="numero"
+                                    required>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="comp_logo" class="form-label">Logo:</label>
+                                <input type="file" class="form-control custom-input" id="comp_logo" name="logo"
+                                    accept="image/*">
+                            </div>
+                        </div>
+                        <div class="text-center mt-4">
+                            <button type="submit"
+                                class="btn btn-warning fw-bold px-5 py-2 rounded-pill">Registrar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
 <!-- Dependencias externas -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
