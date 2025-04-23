@@ -179,3 +179,8 @@ body {
   .tab-nav {
     background-color: #00425A;
   }
+
+  .table-responsive {
+    max-height: 400px;
+    overflow-y: auto;
+  }

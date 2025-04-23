@@ -8,41 +8,23 @@ from flask import (
     flash,
     url_for,
 )
-from db.db import connect_to_database, get_db
+from db.db import connect_to_database
 import os
-from mysql.connector import Error
-
-# Cargar variables desde el archivo .env
-# load_dotenv()
 
 general_bp = Blueprint("general_bp", __name__)
-
 
 @general_bp.route("/")
 def index():
     return redirect(url_for("general_bp.login"))
 
-
 @general_bp.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        required_fields = ["usuario", "password"]
-        missing_fields = [
-            field for field in required_fields if not request.form.get(field)
-        ]
+        usuario = request.form.get("usuario", "").strip()
+        password = request.form.get("password", "").strip()
 
-        if missing_fields:
-            return (
-                jsonify(
-                    {
-                        "error": f"Faltan los siguientes campos: {', '.join(missing_fields)}"
-                    }
-                ),
-                400,
-            )
-
-        usuario = request.form.get("usuario").strip()
-        password = request.form.get("password").strip()
+        if not usuario or not password:
+            return jsonify({"error": "Faltan campos obligatorios"}), 400
 
         try:
             conn = connect_to_database()
@@ -50,49 +32,49 @@ def login():
 
             query = """
                 SELECT persona.rfc, persona.rol, usuario.rfccomp,
-                       puesto.idpuesto, puesto.nombre, puesto.hentrada, puesto.hsalida
-                FROM persona 
+                       persona.nombre, persona.app, persona.apm,
+                       rol.nombre AS nombre_rol
+                FROM persona
                 JOIN usuario ON usuario.rfc = persona.rfc
-                LEFT JOIN puesto ON persona.rol = puesto.idpuesto
+                LEFT JOIN rol ON persona.rol = rol.idrol
                 WHERE usuario.usuario = %s AND usuario.password = %s;
             """
             cursor.execute(query, (usuario, password))
-            res1 = cursor.fetchone()
+            resultado = cursor.fetchone()
             conn.close()
 
-            if res1 is None:
+            if resultado is None:
                 return jsonify({"message": "Credenciales inválidas"}), 400
 
-            # Desempaquetar datos
-            rfc, rol_usuario, rfc_comp, puesto_id, puesto_nombre, h_ent, h_sal = res1
+            # Desempaquetar los datos
+            rfc, rol_id, rfc_comp, nombre, app, apm, rol_nombre = resultado
 
-            # Guardar sesión
+            # Guardar en sesión
             session["rfc"] = rfc
-            session["rol"] = rol_usuario
+            session["rol"] = rol_id
+            session["rol_nombre"] = rol_nombre
             session["rfccomp"] = rfc_comp
-            session["idpuesto"] = puesto_id
-            session["nombre"] = puesto_nombre
-            session["hentrada"] = str(h_ent)
-            session["hsalida"] = str(h_sal)
+            session["usuario_nombre"] = f"{nombre} {app} {apm}"
 
-            print("Sesión guardada:", dict(session))
+            print("Sesión:", dict(session))
 
-            # Redirección por rol
-            if rol_usuario == "0":
+            # Redireccionar por rol
+            if rol_id == "0":
                 return redirect(url_for("app_routes.dashboard_superuser"))
-            elif rol_usuario == "1":
+            elif rol_id == "1":
                 return redirect(url_for("app_routes.dashboard_owner"))
-            elif rol_usuario in ["2", "3", "4"]:
+            elif rol_id == "4":
+                return redirect(url_for("app_routes.dashboard_capturista"))
+            elif rol_id in ["2", "3"]:
                 return redirect(url_for("app_routes.dashboard_employees"))
             else:
                 return jsonify({"message": "Rol no reconocido"}), 403
 
         except Exception as e:
-            return jsonify({"error": f"Error en servidor: {str(e)}"}), 500
+            return jsonify({"error": f"Error del servidor: {str(e)}"}), 500
 
-    # Si GET, renderiza login
+    # Si GET, mostrar formulario
     return render_template("login.html")
-
 
 @general_bp.route("/logout")
 def logout():
@@ -100,11 +82,9 @@ def logout():
     flash("Sesión cerrada", "info")
     return redirect(url_for("general_bp.login"))
 
-
 @general_bp.route("/no-autorizado")
 def no_autorizado():
-    return "No tienes permisos para acceder a esta página", 403
-
+    return render_template('/general/no_autorizado.html')
 
 def convertToObject(cursor):
     columns = [column[0] for column in cursor.description]

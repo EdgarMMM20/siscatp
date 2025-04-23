@@ -1,0 +1,128 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(90deg, #04394E, #0E5D74);
+  }
+
+  .header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: transparent;
+    z-index: 10;
+  }
+
+  main {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 60px;
+    box-sizing: border-box;
+  }
+
+  .form-box {
+    background-color: #346878;
+    border-radius: 40px 0px 0px 40px;
+    border-bottom-right-radius: 40px;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 0;
+    backdrop-filter: blur(8px);
+    position: relative;
+    z-index: 3;
+  }
+
+  .btn-login {
+    background-color: #003B53;
+    color: white;
+    border: none;
+  }
+
+  .btn-login:hover {
+    background-color: #005373;
+  }
+
+  .text-light-blue {
+    color: #88dfff;
+  }
+
+  .container {
+    position: relative;
+  }
+
+  .logo-img {
+    height: auto;
+    filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.5));
+  }
+
+  /* Animación Desktop */
+  @media (min-width: 768px) {
+    .logo-img {
+      max-width: 350px;
+    }
+
+    .logo-animate {
+      display: inline-block;
+      z-index: 1;
+      animation: moveFromBehind 1.5s ease-out forwards;
+    }
+
+    @keyframes moveFromBehind {
+      0% {
+        transform: translateX(-120%);
+      }
+      100% {
+        transform: translateX(0);
+      }
+    }
+  }
+
+  /* Animación Móvil */
+  @media (max-width: 767px) {
+    .logo-img {
+      max-width: 150px;
+    }
+    .logo-animate {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0.5);
+  z-index: 0;  
+  animation: riseUpFromBehind 1.5s ease-out forwards;
+}
+
+@keyframes riseUpFromBehind {
+  0% {
+    transform: translate(-50%, -250%) scale(0.5);
+    z-index: 0;
+  }
+  70% {
+    transform: translate(-50%, -300px) scale(1);
+    z-index: 0;
+  }
+  100% {
+    transform: translate(-50%, -270px) scale(1);
+    z-index: 5;
+  }
+}
+  }
+  
+  .alert-container {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    z-index: 20;
+}
+
+.alert {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin: 0 auto;
+    text-align: center;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
