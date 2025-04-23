@@ -16,6 +16,44 @@
 <body>
     {% include 'partials/menu.html' %}
 
+    <header class="topbar">
+        <button class="btn text-white d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+            <ion-icon name="menu-outline" size="large"></ion-icon>
+        </button>
+        <a href="#" class="d-flex align-items-center text-white text-decoration-none">
+            <img src="{{ url_for('static', filename='img/siscatp blanco.png') }}" alt="Logo SISCATP" width="40"
+                height="30" class="me-2" />
+            <h4 class="mb-0">SISCATP</h4>
+        </a>
+        <div class="user-info ms-auto dropdown">
+            <span class="d-none d-lg-inline mb-0">Bienvenido, Marquez</span>
+            <a class="text-white ms-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <ion-icon name="person"></ion-icon>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    <h6 class="dropdown-header">Josue</h6>
+                </li>
+                <li><a class="dropdown-item" href="">Cerrar sesión</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="mobileMenu">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">SISCATP</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+            <a href="#" class="d-block px-3 py-2"><ion-icon name="grid-outline"></ion-icon> Dashboard</a>
+            <a href="/dashboard/superuser/register" class="d-block px-3 py-2"><ion-icon
+                    name="people-outline"></ion-icon> Empleados</a>
+            <a href="#" class="d-block px-3 py-2"><ion-icon name="cube-outline"></ion-icon> Productos</a>
+            <a href="#" class="d-block px-3 py-2"><ion-icon name="bar-chart-outline"></ion-icon> Reportes</a>
+            <a href="#" class="d-block px-3 py-2"><ion-icon name="search-outline"></ion-icon> Buscar compañía</a>
+            <a href="#" class="d-block px-3 py-2"><ion-icon name="settings-outline"></ion-icon> Ajuste</a>
+        </div>
+    </div>
     {% block content %}
     <main class="main-content">
         <div class="row g-4">

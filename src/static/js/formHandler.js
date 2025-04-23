@@ -154,9 +154,9 @@ function onSuccess(formId, nextTabSelector) {
     clearForm("companyForm");
 
     // Reiniciar barra de progreso al terminar todo
-    const progressBar = DocumentFragment.getElementById("progress-bar");
+    const progressBar = document.getElementById("progress-bar");
     if (progressBar) {
-      progressBar.style.width = "0%";
+      progressBar.style.width = "50%";
       progressBar.textContent = "Paso 1 de 2";
     }
   }

@@ -4,40 +4,109 @@
 <main class="main-content">
   <div class="mb-4">
     <a href="{{ url_for('app_routes.dashboard_superuser_register') }}"
-      class="btn btn-warning text-dark fw-bold px-4 py-2 rounded-pill">Registrar Dueño y compañia</a>
-   
+      class="col-md-3 btn btn-warning text-dark fw-bold px-6 py-2 rounded-pill">Registrar Dueño y compañia</a>
   </div>
+  <form id="filtro-form" method="GET" class="row g-2 mb-3">
+    <!-- Input para buscar por RFC -->
+    <div class="col-md-4">
+      <input type="text" name="obrfc" class="form-control" placeholder="Buscar por RFC"
+        value="{{ request.args.get('rfc', '') }}">
+    </div>
+    <!-- Select para filtrar por estado -->
+    <div class="col-md-4">
+      <select name="filtro" class="form-select" id="filtro-select">
+        <option value="activos" {% if request.args.get('filtro', 'activos' )=='activos' %}selected{% endif %}>Solo
+          Activos</option>
+        <option value="inactivos" {% if request.args.get('filtro')=='inactivos' %}selected{% endif %}>Solo Inactivos
+        </option>
+        <option value="recientes" {% if request.args.get('filtro')=='recientes' %}selected{% endif %}>Agregados
+          Recientemente</option>
+        <option value="" {% if request.args.get('filtro')=='' %}selected{% endif %}>Mostrar todos</option>
+      </select>
+    </div>
+    <!-- Botón para aplicar los filtros -->
+<!-- <div class="col-md-2">
+  <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+</div> -->
+    
+  </form>
   <div class="bg-white p-4 rounded-4 shadow-sm">
-    <h5 class="fw-bold mb-4">Lista de dueños</h5>
-
-    <div class="table-responsive">
-      <table class="table table-bordered text-center align-middle">
+      <!-- Mensaje flash flotante -->
+      <div class="d-flex align-items-center justify-content-between mb-4" style="gap: 1rem;">
+        <h4 class="fw-bold m-0">Lista de dueños</h4>
+      </div>
+    <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+      <table class="table table-striped text-center align-middle">
         <thead class="table-dark">
           <tr>
             <th>RFC</th>
             <th>Nombre</th>
-            <th>Rol</th>
+            <th>Apellido paterno</th>
+            <th>Apellido materno</th>
+            <th>Telefono</th>
+            <th>Correo</th>
             <th>Fecha de registro</th>
             <th>Estado</th>
             <th>Acciones</th>
           </tr>
         </thead>
+
         <tbody>
+          {% for dueño in dueños %}
           <tr>
-            <td>MAHJ030812</td>
-            <td>Josué</td>
-            <td>Dueño</td>
-            <td>12-03-2025</td>
-            <td>Activo</td>
+            <td>{{dueño.rfc}}</td>
+            <td>{{dueño.nombre}}</td>
+            <td>{{dueño.app}}</td>
+            <td>{{dueño.apm}}</td>
+            <td>{{dueño.tel}}</td>
+            <td>{{dueño.mail}}</td>
+            <td>{{dueño.fechregis}}</td>
             <td>
-              <button class="btn btn-sm btn-primary me-2">Modificar</button>
-              <button class="btn btn-sm btn-dark">Eliminar</button>
+              {% if dueño.activo == 1 %}
+              <span class="badge bg-success">Activo</span>
+              {% else %}
+              <span class="badge bg-secondary">Inactivo</span>
+              {% endif %}
+            </td>
+            <td>
+              <button class="btn btn-sm btn-primary mb-1">Modificar</button>
+              <!--
+  Botón de acción para activar/inactivar:
+  - Si el usuario está activo, muestra "Eliminar" (desactivar)
+  - Si el usuario está inactivo, muestra "Reactivar" (activar)
+  Ambos usan el mismo formulario y ruta, pero el backend debe cambiar el estado según el actual.
+-->
+              <form method="POST" action="{{ url_for('BP_SuperUserRoutes.toggle_estado_dueño', rfc=dueño.rfc) }}"
+                style="display:inline;">
+                {% if dueño.activo == 1 %}
+                <button type="submit" class="btn btn-sm btn-dark">Eliminar</button>
+                {% else %}
+                <button type="submit" class="btn btn-sm btn-success">Reactivar</button>
+                {% endif %}
+              </form>
             </td>
           </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>
   </div>
 </main>
+<script>
 
+  // Cuando cambia el select, envía el formulario automáticamente
+ document.getElementById('filtro-select').addEventListener('change', function(){
+    document.getElementById('filtro-form').submit();
+});
+  // Oculta automáticamente los mensajes flash flotantes después de 3 segundos
+  setTimeout(function() {
+    document.querySelectorAll('#flash-toast-container .flash-toast').forEach(function(toast) {
+      toast.style.transition = 'opacity 0.5s';
+      toast.style.opacity = '0';
+      setTimeout(function() {
+        toast.style.display = 'none';
+      }, 500);
+    });
+  }, 3000);
+</script>
 {% endblock %}

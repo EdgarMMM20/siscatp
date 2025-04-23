@@ -23,13 +23,14 @@ def dashboard_superuser():
 @app_routes.route('/dashboard/superuser/gestionuser')
 @validar_sesion_y_rol("0")
 def dashboard_superuser_gestionuser():
-    return render_template('superuser/gestionuser.html')
+    return redirect(url_for('BP_SuperUserRoutes.mostrar_dueños'))
 
 @app_routes.route('/dashboard/superuser/register')
 @validar_sesion_y_rol("0")
 def dashboard_superuser_register():
     return render_template('superuser/registraruser.html')
 @validar_sesion_y_rol("0")
+
 
 @app_routes.route('/dashboard/superuser/company')
 @validar_sesion_y_rol("0")
