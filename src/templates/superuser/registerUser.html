@@ -1,0 +1,119 @@
+{% extends 'superuser/dashboard.html' %}
+
+{% block content %}
+    <main class="main-content">
+        <h5 class="fw-bold text-orange mb-2">Registro de usuario</h5>
+        <div class="bg-white p-4 rounded-4 shadow-sm mb-5">
+            <form id="datos-usuario" action="/registerUser" method="POST">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="owner_rfc" class="form-label">RFC:</label>
+                        <input class="form-control custom-input" type="text" id="user_rfc" name="rfc" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="owner_nombre" class="form-label">Nombre:</label>
+                    <input class="form-control custom-input" type="text" id="user_nombre" name="nombre"
+                        required>
+                </div>
+                <div class="col-md-4">
+                    <label for="owner_app" class="form-label">Apellido paterno:</label>
+                    <input class="form-control custom-input" type="text" id="user_app" name="app" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="owner_apm" class="form-label">Apellido materno:</label>
+                    <input class="form-control custom-input" type="text" id="user_apm" name="apm" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="owner_sexo" class="form-label">Sexo:</label>
+                    <select class="form-select custom-input" id="user_sexo" name="sexo" required>
+                        <option value="" disabled selected>Seleccionar</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Femenino</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="owner_tel" class="form-label">Teléfono:</label>
+                    <input class="form-control custom-input" type="tel" id="user_tel" name="tel" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="owner_mail" class="form-label">Correo electrónico:</label>
+                    <input class="form-control custom-input" type="email" id="user_mail" name="mail"
+                        required>
+                </div>
+                <div class="col-md-4">
+                    <label for="owner_rol" class="form-label">Rol:</label>
+                    <select class="form-select custom-input" id="user_rol" name="rol" required>
+                        <option value="" disabled selected>Seleccionar</option>
+                        {% for rol in roles %}
+                            <option value="{{ rol[0] }}">{{ rol[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label for="user_paises" class="form-label">País:</label>
+                    <select class="form-select custom-input" id="user_paises" name="paises" required
+                        onchange="selectPais(event)">
+                        <option value="" disabled selected>Selecciona el país</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="user_estados" class="form-label">Estado:</label>
+                    <select class="form-select custom-input" id="user_estados" name="estados"
+                        onchange="selectEstado(event)">
+                        <option value="" disabled selected>Selecciona el estado</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="user_municipios" class="form-label">Municipio:</label>
+                    <select class="form-select custom-input" id="user_municipios" name="municipios"
+                        onchange="selectMunicipio(event)">
+                        <option value="" disabled selected>Selecciona el municipio</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="user_idcolonia" class="form-label">Colonia:</label>
+                    <select class="form-select custom-input" id="user_idcolonia" name="idcolonia" required>
+                        <option value="" disabled selected>Selecciona la colonia</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="user_calle" class="form-label">Calle:</label>
+                    <input class="form-control custom-input" type="text" id="user_calle" name="calle"
+                        required>
+                </div>
+                <div class="col-md-4">
+                    <label for="user_numero" class="form-label">Número de calle:</label>
+                    <input class="form-control custom-input" type="text" id="user_numero" name="numero"
+                        required>
+                </div>
+                <div class="col-md-6">
+                    <label for="user_usuario" class="form-label">Usuario:</label>
+                    <input class="form-control custom-input" type="text" id="user_usuario" name="usuario"
+                        required>
+                </div>
+                <div class="col-md-6">
+                    <label for="user_password" class="form-label">Contraseña:</label>
+                    <input class="form-control custom-input" type="password" id="user_password"
+                        name="password" required>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <button type="submit"
+                    class="btn btn-warning fw-bold px-5 py-2 rounded-pill">Guardar</button>
+            </div>
+        </form>
+    </div>  
+    </main>    
+<!-- Dependencias externas -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
+<!-- Archivos JavaScript locales -->
+<script src="{{ url_for('static', filename='js/location.js') }}"></script>
+<script src="{{ url_for('static', filename='js/formHandler.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        handleFormWithSweetAlert('#datos-usuario');
+        // handleFormWithSweetAlert('#otro-formulario');
+    });
+</script>
+{% endblock %}      

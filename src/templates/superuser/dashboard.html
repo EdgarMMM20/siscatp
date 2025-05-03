@@ -1,132 +1,76 @@
 <!DOCTYPE html>
 <html lang="es">
-
-<head>
-    <meta charset="UTF-8" />
-    <title>SISCATP - Dashboard</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
-</head>
-
 <body>
     {% include 'partials/menu.html' %}
 
-    <header class="topbar">
-        <button class="btn text-white d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
-            <ion-icon name="menu-outline" size="large"></ion-icon>
-        </button>
-        <a href="#" class="d-flex align-items-center text-white text-decoration-none">
-            <img src="{{ url_for('static', filename='img/siscatp blanco.png') }}" alt="Logo SISCATP" width="40"
-                height="30" class="me-2" />
-            <h4 class="mb-0">SISCATP</h4>
-        </a>
-        <div class="user-info ms-auto dropdown">
-            <span class="d-none d-lg-inline mb-0">Bienvenido, Marquez</span>
-            <a class="text-white ms-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <ion-icon name="person"></ion-icon>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end">
-                <li>
-                    <h6 class="dropdown-header">Josue</h6>
-                </li>
-                <li><a class="dropdown-item" href="">Cerrar sesión</a></li>
-            </ul>
-        </div>
-    </header>
-
-    <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="mobileMenu">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title">SISCATP</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-        </div>
-        <div class="offcanvas-body p-0">
-            <a href="#" class="d-block px-3 py-2"><ion-icon name="grid-outline"></ion-icon> Dashboard</a>
-            <a href="/dashboard/superuser/register" class="d-block px-3 py-2"><ion-icon
-                    name="people-outline"></ion-icon> Empleados</a>
-            <a href="#" class="d-block px-3 py-2"><ion-icon name="cube-outline"></ion-icon> Productos</a>
-            <a href="#" class="d-block px-3 py-2"><ion-icon name="bar-chart-outline"></ion-icon> Reportes</a>
-            <a href="#" class="d-block px-3 py-2"><ion-icon name="search-outline"></ion-icon> Buscar compañía</a>
-            <a href="#" class="d-block px-3 py-2"><ion-icon name="settings-outline"></ion-icon> Ajuste</a>
-        </div>
-    </div>
     {% block content %}
     <main class="main-content">
-        <div class="row g-4">
-            <div class="col-md-3">
-                <div class="card-box">
-                    <h6>Cajas en almacén</h6>
-                    <span>500</span>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card-box">
-                    <h6>Productos en almacén</h6>
-                    <span>1000</span>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card-box">
-                    <h6>Entrada hoy</h6>
-                    <span>80</span>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card-box">
-                    <h6>Salida hoy</h6>
-                    <span>80</span>
-                </div>
-            </div>
-        </div>
 
-        <div class="section-title">Áreas en el almacén</div>
-        <div class="row g-4">
-            <div class="col-md-3">
-                <div class="area-box">
-                    <strong>Higiene y limpieza</strong><br /><small>120 productos almacenados</small>
+        <!-- Sección de estadísticas principales -->
+        <section class="mb-5">
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="card-box">
+                        <h6>Dueños de almacenes</h6>
+                        <span>13</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card-box">
+                        <h6>Usuarios registrados</h6>
+                        <span>150</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card-box">
+                        <h6>Almacenes</h6>
+                        <span>13</span>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="area-box">
-                    <strong>Bebidas</strong><br /><small>120 productos almacenados</small>
+        </section>
+
+        <!-- Sección de compañías registradas -->
+        <section class="bg-white p-4 rounded-4 shadow-sm mb-5">
+            <h5 class="fw-bold mb-4">Compañías registradas</h5>
+
+           
+        </section>
+
+        <!-- Sección de resumen dinámico -->
+        <section class="bg-white p-4 rounded-4 shadow-sm">
+            <h5 class="fw-bold mb-3">Resumen de actividad</h5>
+
+            <div class="row g-3 text-center">
+                <div class="col-md-3">
+                    <div class="border rounded-4 p-3">
+                        <small>Usuarios registrados</small>
+                        <h4 class="fw-bold">124</h4>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="border rounded-4 p-3">
+                        <small>Dueños activos</small>
+                        <h4 class="fw-bold">9</h4>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="border rounded-4 p-3">
+                        <small>Suscripciones activas</small>
+                        <h4 class="fw-bold">7</h4>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="border rounded-4 p-3">
+                        <small>Última visita web</small>
+                        <h4 class="fw-bold">hace 2h</h4>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="area-box">
-                    <strong>Enlatados</strong><br /><small>120 productos almacenados</small>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="area-box">
-                    <strong>Granos y semillas</strong><br /><small>120 productos almacenados</small>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="area-box">
-                    <strong>Cocina</strong><br /><small>120 productos almacenados</small>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="area-box">
-                    <strong>Cereales y panificados</strong><br /><small>120 productos almacenados</small>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="area-box">
-                    <strong>Otros</strong><br /><small>120 productos almacenados</small>
-                </div>
-            </div>
-        </div>
+        </section>
+
     </main>
     {% endblock %}
-    <div class="footer-wave"></div>
-    <footer class="footer-content text-center p-4">
-        <p></p>
-    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

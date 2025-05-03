@@ -1,0 +1,54 @@
+{% extends 'superuser/dashboard.html' %}
+
+{% block content %}
+<main class="main-content">
+<div class="container mt-4">
+    <h3 class="mb-3">Lista de Sucursales</h3>
+    <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+        <table class="table table-striped text-center align-middle">
+          <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>RFC Compañía</th>
+                    <th>Colonia</th>
+                    <th>Calle</th>
+                    <th>Número</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tbody-sucursales">
+                <!-- Las sucursales se llenarán por JS -->
+            </tbody>
+        </table>
+    </div>
+</div>
+</main>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('/dashboard/superuser/api/sucursales')
+            .then(res => res.json())
+            .then(data => {
+                const tbody = document.getElementById('tbody-sucursales');
+                tbody.innerHTML = '';
+                if (data.sucursales && data.sucursales.length > 0) {
+                    data.sucursales.forEach(suc => {
+                        tbody.innerHTML += `<tr>
+                            <td>${suc.id}</td>
+                            <td>${suc.nombre}</td>
+                            <td>${suc.rfccomp}</td>
+                            <td>${suc.colonia}</td>
+                            <td>${suc.calle}</td>
+                            <td>${suc.numero}</td>
+                        </tr>`;
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6">No hay sucursales registradas.</td></tr>';
+                }
+            })
+            .catch(() => {
+                document.getElementById('tbody-sucursales').innerHTML = '<tr><td colspan="6">Error al cargar sucursales.</td></tr>';
+            });
+    });
+</script>
+{% endblock %}

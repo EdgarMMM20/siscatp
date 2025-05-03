@@ -1,0 +1,89 @@
+{% extends 'superuser/dashboard.html' %}
+
+{% block content %}
+<main class="main-content">
+    <form id="filtro-form" method="GET" class="row g-2 mb-3">
+      <!-- Input para buscar por RFC -->
+      <div class="col-md-4">
+        <input type="text" name="obrfc" class="form-control custom-input" placeholder="Buscar compañia por RFC o nombre"
+          value="{{ request.args.get('rfc', '') }}">
+      </div>
+  
+      <!-- Botón para aplicar los filtros -->
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Buscar</button>
+      </div>
+      <!-- Select para filtrar por estado -->
+      <div class="col-md-3 ms-1 ">
+        <select name="filtro" class="form-select custom-input" id="filtro-select" onchange="this.form.submit()">
+          <option value="activos" {% if request.args.get('filtro', 'activos' )=='activos' %}selected{% endif %}>Solo Activos</option>
+          <option value="inactivos" {% if request.args.get('filtro')=='inactivos' %}selected{% endif %}>Solo Inactivos</option>
+          <option value="" {% if request.args.get('filtro')=='' %}selected{% endif %}>Mostrar todos</option>
+        </select>
+      </div>
+  
+    </form>
+    <div class="bg-light p-4 rounded-4 shadow-sm position-relative">
+      <!-- Mensaje flash flotante -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <div id="flash-toast-container">
+        {% for category, message in messages %}
+        <div class="flash-toast flash-{{ category }}">
+          {{ message }}
+          <span class="flash-toast-close" onclick="this.parentElement.style.display='none';">&times;</span>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% endwith %}
+      <div class="d-flex align-items-center justify-content-between mb-4" style="gap: 1rem;">
+        <h5 class="fw-bold m-0">Lista de compañias</h5>
+      </div>
+      <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+        <table class="table table-striped text-center align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th>RFC compañia</th>
+              <th>Nombre</th>
+              <th>Dueño</th>
+              <th>Telefono</th>
+              <th>Correo</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+  
+          <tbody>
+            {% for comp in companias %}
+            <tr>
+              <td>{{ comp.rfccomp }}</td>
+              <td>{{ comp.nombre }}</td>
+              <td>{{ comp.dueño }}</td>
+              <td>{{ comp.tel }}</td>
+              <td>{{ comp.mail }}</td>
+              <td>
+                {% if comp.estatus == 1 %}
+                  <span class="badge bg-success">Activo</span>
+                {% else %}
+                  <span class="badge bg-secondary">Inactivo</span>
+                {% endif %}
+              </td>
+              <td>
+                <button class="btn btn-sm btn-primary mb-1">Modificar</button>
+                <form method="POST" action="{{ url_for('BP_SuperUserRoutes.toggle_estado_compania', rfccomp=comp.rfccomp) }}" style="display:inline;">
+                  {% if comp.estatus == 1 %} 
+                  <button type="submit" class="btn btn-sm btn-dark">Eliminar</button>
+                  {% else %}
+                  <button type="submit" class="btn btn-sm btn-success">Reactivar</button>
+                  {% endif %}
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+{% endblock %}

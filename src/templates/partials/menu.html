@@ -7,17 +7,37 @@
     {% set base_menu = [
         {'href': '/dashboard/superuser/principal', 'icon': 'grid-outline', 'label': 'Dashboard'},
         {'href': '/dashboard/superuser/gestionuser', 'icon': 'people-outline', 'label': 'Compañías y dueños'},
-        {'href': '/dashboard/capturista/registrarpro', 'icon': 'cube-outline', 'label': 'Productos'},
+        {'href': '/dashboard/superuser/sucursales', 'icon': 'home-outline', 'label': 'Sucursales'},
+        {'href': '/dashboard/superuser/registeruser', 'icon': 'person-add-outline', 'label': 'Agregar usuario'},
         {'href': '/dashboard/superuser/metricas', 'icon': 'bar-chart-outline', 'label': 'Métricas'},
+        {'href': '/dashboard/superuser/registrarpuesto', 'icon': 'briefcase-outline', 'label': 'Agregar puesto'},
         {'href': '/dashboard/superuser/subirpost', 'icon': 'logo-facebook', 'label': 'Subir post'},
         {'href': '#', 'icon': 'settings-outline', 'label': 'Ajuste'}
+    ] %}
+{% elif idrol == '1' %}
+    {% set base_menu = [
+        {'href': '/dashboard/owner/principal', 'icon': 'grid-outline', 'label': 'Dashboard'},
+        {'href': '/dashboard/owner/registeruser', 'icon': 'person-add-outline', 'label': 'Agregar usuario'},
+        {'href': '/dashboard/owner/gestionuser', 'icon': 'people-outline', 'label': 'Gestionar usuarios'}
     ] %}
 {% elif idrol == '4' %}
     {% set base_menu = [
         {'href': '/dashboard/capturista/registrarpro', 'icon': 'cube-outline', 'label': 'Productos'}
     ] %}
 {% endif %}
-
+{% block head %}
+<head>
+    <meta charset="UTF-8" />
+    <title>SISCATP - Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
+</head>
+{% endblock %}
 <!-- Sidebar (pantallas grandes) -->
 <div class="sidebar d-none d-lg-block">
     {% for item in base_menu %}
@@ -32,7 +52,7 @@
     </button>
     <a href="#" class="d-flex align-items-center text-white text-decoration-none">
         <img src="{{ url_for('static', filename='img/siscatp blanco.png') }}" alt="Logo SISCATP" width="40"
-             height="30" class="me-2" />
+        height="30" class="me-2" />
         <h4 class="mb-0">SISCATP</h4>
     </a>
     <div class="user-info ms-auto dropdown">

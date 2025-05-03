@@ -20,6 +20,7 @@ const REGISTRO_PENDIENTE_KEY = "registroDueñoPendiente";
 const FORM_KEYS = {
   ownerForm: "ownerFormData",
   companyForm: "companyFormData"
+  
 };
 
 // -----------------------------
@@ -282,3 +283,73 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 });
+
+/**
+ * Maneja el submit de cualquier formulario por AJAX y muestra SweetAlert.
+ * @param {string} formSelector - Selector CSS del formulario (ej: "#mi-formulario")
+ * @param {object} options - Opciones adicionales (opcional)
+ *        options.successCallback: función a ejecutar en éxito
+ *        options.errorCallback: función a ejecutar en error
+ */
+function handleFormWithSweetAlert(formSelector, options = {}) {
+  const form = document.querySelector(formSelector);
+  if (!form) return;
+
+  form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      //console.log('Interceptado por AJAX');
+      const formData = new FormData(form);
+
+      try {
+          const response = await fetch(form.action, {
+              method: form.method || 'POST',
+              body: formData
+          });
+          const result = await response.json();
+
+          if (response.ok && result.message) {
+              Swal.fire({
+                  icon: 'success',
+                  title: '¡Éxito!',
+                  text: result.message,
+                  confirmButtonText: 'Aceptar'
+              }).then(() => {
+                  if (options.successCallback) options.successCallback(result, form);
+                  else form.reset();
+                  //Cierrra el modal si el formulario nesta dentro de uno
+                  const modal = form.closest('.modal');
+                  if (modal) bootstrap.Modal.getInstance(modal)?.hide();
+                  
+              });
+          } else {
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: result.error || result.message || 'Ocurrió un error.'
+              });
+              if (options.errorCallback) options.errorCallback(result, form);
+          }
+      } catch (error) {
+          Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'No se pudo conectar con el servidor.'
+          });
+          if (options.errorCallback) options.errorCallback({error: error}, form);
+      }
+  });
+}
+
+// Limpia el formulario de cualquier modal al cerrarse/cancelar
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.modal .btn[data-bs-dismiss="modal"]').forEach(btn => {
+      btn.addEventListener('click', function() {
+          const modal = btn.closest('.modal');
+          if (modal) {
+              const form = modal.querySelector('form');
+              if (form) form.reset();
+          }
+      });
+  });
+});
+  

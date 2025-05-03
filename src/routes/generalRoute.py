@@ -7,8 +7,9 @@ from flask import (
     session,
     flash,
     url_for,
+
 )
-from db.db import connect_to_database
+from db.db import *
 import os
 
 general_bp = Blueprint("general_bp", __name__)
