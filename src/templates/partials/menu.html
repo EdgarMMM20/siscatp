@@ -12,7 +12,7 @@
         {'href': '/dashboard/superuser/metricas', 'icon': 'bar-chart-outline', 'label': 'Métricas'},
         {'href': '/dashboard/superuser/registrarpuesto', 'icon': 'briefcase-outline', 'label': 'Agregar puesto'},
         {'href': '/dashboard/superuser/subirpost', 'icon': 'logo-facebook', 'label': 'Subir post'},
-        {'href': '#', 'icon': 'settings-outline', 'label': 'Ajuste'}
+        {'href': '/dashboard/superuser/ajuste', 'icon': 'settings-outline', 'label': 'Ajuste'}
     ] %}
 {% elif idrol == '1' %}
     {% set base_menu = [
@@ -22,6 +22,7 @@
     ] %}
 {% elif idrol == '4' %}
     {% set base_menu = [
+        {'href': '/dashboard/capturista/principal', 'icon': 'grid-outline', 'label': 'Dashboard'},
         {'href': '/dashboard/capturista/registrarpro', 'icon': 'cube-outline', 'label': 'Productos'}
     ] %}
 {% endif %}

@@ -1,0 +1,55 @@
+{% extends 'superuser/dashboard.html' %}
+
+{% block content %}
+<main class="main-content">
+  <h5 class="fw-bold text-orange mb-4">Configuración de Facebook</h5>
+
+  <div class="bg-white p-4 rounded-4 shadow-sm mb-4">
+    <form id="configForm">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="pageId" class="form-label">Page ID:</label>
+          <input type="text" class="form-control" id="pageId" required>
+        </div>
+        <div class="col-md-6">
+          <label for="accessToken" class="form-label">Access Token:</label>
+          <input type="text" class="form-control" id="accessToken" required>
+        </div>
+      </div>
+      <div class="text-center mt-4">
+        <button type="submit" class="btn btn-warning fw-bold px-5 py-2 rounded-pill">Guardar configuración</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="alert alert-success d-none" id="successMessage">
+    ✅ Configuración guardada correctamente. Puedes ir a Subir Post o Métricas.
+  </div>
+</main>
+
+<script>
+  document.getElementById('configForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const pageId = document.getElementById('pageId').value;
+    const accessToken = document.getElementById('accessToken').value;
+
+    // Guardar en sessionStorage (temporal por navegador) o puedes cambiar a cookies si quieres
+    sessionStorage.setItem('page_id', pageId);
+    sessionStorage.setItem('access_token', accessToken);
+
+    // Opcional: También puedes enviar a un endpoint Flask para guardar en server-side session
+    fetch('/guardar-configuracion', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ page_id: pageId, access_token: accessToken })
+    })
+    .then(res => res.json())
+    .then(data => {
+      console.log(data);
+      document.getElementById('successMessage').classList.remove('d-none');
+    })
+    .catch(err => console.error("Error al guardar configuración:", err));
+  });
+</script>
+{% endblock %}

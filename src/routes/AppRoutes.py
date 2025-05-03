@@ -77,6 +77,10 @@ def dashboard_superuser_metricas():
 def dashboard_superuser_subirpost():
     return render_template('superuser/subirpost.html')
 
+@app_routes.route('/dashboard/superuser/ajuste')
+def dashboard_superuser_ajuste():
+    return render_template('superuser/ajuste.html')
+
 #---------------------------- RUTAS PARA EL DUEÑO ---------------------------------------
 @app_routes.route('/dashboard/owner/principal')
 @validar_sesion_y_rol("1")

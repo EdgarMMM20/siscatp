@@ -45,7 +45,8 @@ def login():
             conn.close()
 
             if resultado is None:
-                return jsonify({"message": "Credenciales inválidas"}), 400
+                flash("Usuario o contraseña incorrectos", "danger")
+                return redirect(url_for("general_bp.login"))
 
             # Desempaquetar los datos
             rfc, rol_id, rfc_comp, nombre, app, apm, rol_nombre = resultado

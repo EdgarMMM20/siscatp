@@ -1,107 +1,307 @@
-<!DOCTYPE html>
-<html lang="es">
+{% extends 'superuser/dashboard.html' %}
+<!-- SDK Facebook para embeds -->
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v19.0"></script>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-</head>
+{% block content %}
+<main class="main-content">
+  <h5 class="fw-bold text-orange mb-4">Métricas Sociales - Facebook</h5>
 
-<body>
-    {% include 'partials/menu.html' %}
-
-    <main class="main-content">
-        <h5 class="fw-bold text-orange mb-4">Métricas Sociales - Facebook</h5>
-      
-        <div class="bg-white p-4 rounded-4 shadow-sm">
-          <div class="row g-4 mb-4">
-            <div class="col-md-3">
-              <div class="card-box text-center p-3 border rounded-4">
-                <ion-icon name="eye-outline" size="large"></ion-icon>
-                <h6 class="mt-2">Impresiones totales</h6>
-                <h4 class="fw-bold" id="totalImpressions">0</h4>
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class="card-box text-center p-3 border rounded-4">
-                <ion-icon name="hand-left-outline" size="large"></ion-icon>
-                <h6 class="mt-2">Interacciones</h6>
-                <h4 class="fw-bold" id="totalInteractions">0</h4>
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class="card-box text-center p-3 border rounded-4">
-                <ion-icon name="chatbox-ellipses-outline" size="large"></ion-icon>
-                <h6 class="mt-2">Comentarios</h6>
-                <h4 class="fw-bold" id="totalComments">0</h4>
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class="card-box text-center p-3 border rounded-4">
-                <ion-icon name="share-social-outline" size="large"></ion-icon>
-                <h6 class="mt-2">Compartidos</h6>
-                <h4 class="fw-bold" id="totalShares">0</h4>
-              </div>
-            </div>
-          </div>
-      
-          <!-- Gráfica de interacciones por publicación -->
-          <div class="bg-light rounded-4 p-4 mb-5">
-            <h6 class="fw-bold mb-3">Interacciones por publicación</h6>
-            <canvas id="interactionsChart" height="100"></canvas>
-          </div>
-      
-          <!-- Tabla de publicaciones -->
-          <div class="table-responsive">
-            <table class="table table-bordered text-center align-middle">
-              <thead class="table-dark">
-                <tr>
-                  <th>ID Publicación</th>
-                  <th>Fecha</th>
-                  <th>Contenido</th>
-                  <th>Impresiones</th>
-                  <th>Interacciones</th>
-                  <th>Comentarios</th>
-                  <th>Compartidos</th>
-                </tr>
-              </thead>
-              <tbody id="postMetrics">
-                <!-- Datos dinámicos desde Facebook Graph API -->
-              </tbody>
-            </table>
-          </div>
+  <div class="bg-white p-4 rounded-4 shadow-sm">
+    <!-- Tarjetas métricas generales -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-3">
+        <div class="card-box text-center p-3 border rounded-4">
+          <ion-icon name="eye-outline" size="large"></ion-icon>
+          <h6 class="mt-2">Reacciones totales</h6>
+          <h4 class="fw-bold" id="totalImpressions">0</h4>
         </div>
-      </main>
-      
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-      <script>
-        const ctx = document.getElementById('interactionsChart').getContext('2d');
-        const interactionsChart = new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: [], // Titulos de las publicaciones
-            datasets: [
-              {
-                label: 'Interacciones',
-                data: [], // Cantidades de interacciones por publicación
-                backgroundColor: '#007bff'
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            scales: {
-              y: {
-                beginAtZero: true
-              }
-            }
-          }
-        });
-      </script>
+      </div>
+      <div class="col-md-3">
+        <div class="card-box text-center p-3 border rounded-4">
+          <ion-icon name="hand-left-outline" size="large"></ion-icon>
+          <h6 class="mt-2">Interacciones</h6>
+          <h4 class="fw-bold" id="totalInteractions">0</h4>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card-box text-center p-3 border rounded-4">
+          <ion-icon name="chatbox-ellipses-outline" size="large"></ion-icon>
+          <h6 class="mt-2">Comentarios</h6>
+          <h4 class="fw-bold" id="totalComments">0</h4>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card-box text-center p-3 border rounded-4">
+          <ion-icon name="share-social-outline" size="large"></ion-icon>
+          <h6 class="mt-2">Compartidos</h6>
+          <h4 class="fw-bold" id="totalShares">0</h4>
+        </div>
+      </div>
+    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+    <!-- Gráfico de interacciones generales -->
+    <div class="bg-light rounded-4 p-4 mb-5">
+      <h6 class="fw-bold mb-3">Interacciones por publicación</h6>
+      <canvas id="interactionsChart" height="100"></canvas>
+    </div>
 
-</html>
+    <!-- Tabla de publicaciones -->
+    <div class="table-responsive mb-5">
+      <table class="table table-bordered text-center align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>ID Publicación</th>
+            <th>Fecha</th>
+            <th>Contenido</th>
+            <th>Reacciones</th>
+            <th>Interacciones</th>
+            <th>Comentarios</th>
+            <th>Compartidos</th>
+          </tr>
+        </thead>
+        <tbody id="postMetrics">
+          <!-- Dinámico -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Sección para seleccionar publicación -->
+    <div class="bg-white p-4 rounded-4 shadow-sm">
+      <h6 class="fw-bold mb-3">Consultar publicación específica</h6>
+
+      <div class="row g-3 mb-4">
+        <div class="col-md-8">
+          <select id="postSelector" class="form-select">
+            <option selected disabled>Seleccione una publicación</option>
+            <!-- Opciones dinámicas -->
+          </select>
+        </div>
+        <div class="col-md-4">
+          <button class="btn btn-primary w-100" onclick="buscarPublicacion()">Consultar</button>
+        </div>
+      </div>
+
+      <!-- Resultados -->
+      <div id="detallePublicacion" class="d-none">
+        <h6 class="fw-bold mb-3">Detalles de reacciones</h6>
+
+        <div class="table-responsive mb-4">
+          <table class="table table-bordered text-center align-middle">
+            <thead class="table-dark">
+              <tr>
+                <th>Me gusta</th>
+                <th>Me encanta</th>
+                <th>Me divierte</th>
+                <th>Me asombra</th>
+                <th>Me entristece</th>
+                <th>Me enfada</th>
+                <th>Comentarios</th>
+                <th>Compartidos</th>
+              </tr>
+            </thead>
+            <tbody id="detalleReacciones">
+              <!-- Dinámico -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Gráfico de éxito -->
+        <div class="bg-light rounded-4 p-4">
+          <h6 class="fw-bold mb-3">Gráfico de éxito de la publicación</h6>
+          <canvas id="graficoExito" height="100"></canvas>
+        </div>
+        <div id="embedPublicacion" class="text-center my-4"></div>
+      </div>
+      <div class="text-end mt-3">
+        <button class="btn btn-success" onclick="generarReporte()">Generar reporte</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('interactionsChart').getContext('2d');
+const interactionsChart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: [],
+    datasets: [{
+      label: 'Interacciones',
+      data: [],
+      backgroundColor: '#007bff'
+    }]
+  },
+  options: {
+    responsive: true,
+    scales: {
+      y: { beginAtZero: true }
+    }
+  }
+});
+
+// Cargar publicaciones para métricas generales y para el selector
+let publicaciones = [];
+
+fetch("/get-facebook-metrics")
+  .then(res => res.json())
+  .then(data => {
+    let totalReactions = 0, totalInteractions = 0, totalComments = 0, totalShares = 0;
+    const tbody = document.getElementById("postMetrics");
+    const select = document.getElementById("postSelector");
+    const labels = [], interactionData = [];
+
+    publicaciones = data;
+
+    publicaciones.forEach(post => {
+      const reacciones = post.reacciones || 0;
+      const comentarios = post.comentarios || 0;
+      const compartidos = post.compartidos || 0;
+      const interacciones = reacciones + comentarios + compartidos;
+
+      totalReactions += reacciones;
+      totalComments += comentarios;
+      totalShares += compartidos;
+      totalInteractions += interacciones;
+
+      labels.push(post.id.slice(-5));
+      interactionData.push(interacciones);
+
+      tbody.innerHTML += `
+  <tr>
+    <td>${post.id}</td>
+    <td>${new Date(post.fecha).toLocaleString()}</td>
+    <td>
+      <div class="text-start">
+        <p>${post.mensaje}</p>
+        ${post.imagen ? `<img src="${post.imagen}" alt="Imagen publicación" style="max-width:100%;height:auto;margin-top:10px;border-radius:8px;">` : ''}
+      </div>
+    </td>
+    <td>${post.reacciones}</td>
+    <td>${post.reacciones + post.comentarios + post.compartidos}</td>
+    <td>${post.comentarios}</td>
+    <td>${post.compartidos}</td>
+  </tr>
+`;
+
+      select.innerHTML += `
+        <option value="${post.id}">${post.mensaje.slice(0, 50)}...</option>
+      `;
+    });
+
+    document.getElementById("totalImpressions").textContent = totalReactions;
+    document.getElementById("totalInteractions").textContent = totalInteractions;
+    document.getElementById("totalComments").textContent = totalComments;
+    document.getElementById("totalShares").textContent = totalShares;
+
+    interactionsChart.data.labels = labels;
+    interactionsChart.data.datasets[0].data = interactionData;
+    interactionsChart.update();
+  })
+  .catch(err => {
+    console.error("Error al cargar métricas:", err);
+  });
+
+const graficoExitoCtx = document.getElementById('graficoExito').getContext('2d');
+let graficoExitoChart = new Chart(graficoExitoCtx, {
+  type: 'bar',
+  data: {
+    labels: ['Me gusta', 'Me encanta', 'Me divierte', 'Me asombra', 'Me entristece', 'Me enfada', 'Comentarios', 'Compartidos'],
+    datasets: [{
+      label: 'Cantidad',
+      data: [],
+      backgroundColor: '#28a745'
+    }]
+  },
+  options: {
+    responsive: true,
+    scales: {
+      y: { beginAtZero: true }
+    }
+  }
+});
+
+function buscarPublicacion() {
+  const select = document.getElementById('postSelector');
+  const postId = select.value;
+
+  if (!postId) {
+    alert("Por favor selecciona una publicación");
+    return;
+  }
+
+  fetch(`/get-post-details/${postId}`)
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('detallePublicacion').classList.remove('d-none');
+
+      document.getElementById('detalleReacciones').innerHTML = `
+        <tr>
+          <td>${data.like}</td>
+          <td>${data.love}</td>
+          <td>${data.haha}</td>
+          <td>${data.wow}</td>
+          <td>${data.sad}</td>
+          <td>${data.angry}</td>
+          <td>${data.comentarios}</td>
+          <td>${data.compartidos}</td>
+        </tr>
+      `;
+
+      graficoExitoChart.data.datasets[0].data = [
+        data.like, data.love, data.haha, data.wow, data.sad, data.angry, data.comentarios, data.compartidos
+      ];
+      graficoExitoChart.update();
+
+      // Mostrar el post embebido
+      const embedContainer = document.getElementById('embedPublicacion');
+      embedContainer.innerHTML = `
+        <div class="fb-post" 
+          data-href="https://www.facebook.com/${postId.replace('_', '/posts/')}" 
+          data-width="500" 
+          data-show-text="true">
+        </div>
+      `;
+
+      if (typeof FB !== 'undefined') {
+        FB.XFBML.parse(embedContainer);
+      }
+    })
+    .catch(err => {
+      console.error("Error al consultar detalles:", err);
+      alert("No se pudo consultar la publicación. Verifica el ID.");
+    });
+}
+
+async function generarReporte() {
+  const { jsPDF } = window.jspdf;
+
+  const pdf = new jsPDF();
+  
+  // Capturamos solo el div 'detallePublicacion' (sin el botón)
+  const detalle = document.getElementById('detallePublicacion');
+
+  // Ocultar el botón mientras tomamos captura
+  const boton = document.querySelector('button[onclick="generarReporte()"]');
+  boton.style.display = 'none';
+
+  // Captura del div
+  const canvas = await html2canvas(detalle, { scale: 2 });
+  const imgData = canvas.toDataURL('image/png');
+
+  // Restaurar botón
+  boton.style.display = 'inline-block';
+
+  // Agregar título
+  pdf.setFontSize(20);
+  pdf.text('Detalle de la Publicación', 10, 20);
+
+  // Agregar imagen capturada
+  pdf.addImage(imgData, 'PNG', 10, 30, 190, 0); // Ajusta automáticamente la altura
+
+  pdf.save('detalle_publicacion.pdf');
+}
+</script>
+{% endblock %}
