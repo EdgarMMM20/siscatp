@@ -2,19 +2,31 @@
 
 {% block content %}
 <main class="main-content">
-  <div class="mb-4">
-    <a href="{{ url_for('app_routes.dashboard_superuser_register') }}"
-      class="col-md-3 btn btn-warning text-dark fw-bold px-6 py-2 rounded-pill">Registrar Dueño y compañia</a>
+  <div class="row">
+    <div class="col-md-3 mb-4">
+      <a href="{{ url_for('app_routes.dashboard_superuser_register') }}"
+        class="btn btn-warning text-dark fw-bold px-6 py-2 rounded-pill">Registrar Dueño y compañia</a>
+    </div>
+    <div class="col-md-3 mb-4">
+      <a href="{{ url_for('app_routes.dashboard_superuser_company') }}"
+        class="btn btn-warning text-dark fw-bold px-6 py-2 w-100 h-100 rounded-pill d-flex align-items-center justify-content-center">Ver
+        compañias</a>
+    </div>
   </div>
   <form id="filtro-form" method="GET" class="row g-2 mb-3">
     <!-- Input para buscar por RFC -->
     <div class="col-md-4">
-      <input type="text" name="obrfc" class="form-control" placeholder="Buscar por RFC"
+      <input type="text" name="obrfc" class="form-control custom-input" placeholder="Buscar por RFC"
         value="{{ request.args.get('rfc', '') }}">
     </div>
+
+    <!-- Botón para aplicar los filtros -->
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-primary w-100">Buscar</button>
+    </div>
     <!-- Select para filtrar por estado -->
-    <div class="col-md-4">
-      <select name="filtro" class="form-select" id="filtro-select">
+    <div class="col-md-3 ms-1 ">
+      <select name="filtro" class="form-select custom-input" id="filtro-select">
         <option value="activos" {% if request.args.get('filtro', 'activos' )=='activos' %}selected{% endif %}>Solo
           Activos</option>
         <option value="inactivos" {% if request.args.get('filtro')=='inactivos' %}selected{% endif %}>Solo Inactivos
@@ -24,17 +36,25 @@
         <option value="" {% if request.args.get('filtro')=='' %}selected{% endif %}>Mostrar todos</option>
       </select>
     </div>
-    <!-- Botón para aplicar los filtros -->
-<!-- <div class="col-md-2">
-  <button type="submit" class="btn btn-primary w-100">Filtrar</button>
-</div> -->
-    
+
   </form>
-  <div class="bg-white p-4 rounded-4 shadow-sm">
-      <!-- Mensaje flash flotante -->
-      <div class="d-flex align-items-center justify-content-between mb-4" style="gap: 1rem;">
-        <h4 class="fw-bold m-0">Lista de dueños</h4>
+  <div class="bg-light p-4 rounded-4 shadow-sm position-relative">
+    <!-- Mensaje flash flotante -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div id="flash-toast-container">
+      {% for category, message in messages %}
+      <div class="flash-toast flash-{{ category }}">
+        {{ message }}
+        <span class="flash-toast-close" onclick="this.parentElement.style.display='none';">&times;</span>
       </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+    <div class="d-flex align-items-center justify-content-between mb-4" style="gap: 1rem;">
+      <h5 class="fw-bold m-0">Lista de dueños</h5>
+    </div>
     <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
       <table class="table table-striped text-center align-middle">
         <thead class="table-dark">
@@ -69,7 +89,9 @@
               {% endif %}
             </td>
             <td>
-              <button class="btn btn-sm btn-primary mb-1">Modificar</button>
+              <button class="btn btn-sm btn-primary mb-1" data-bs-toggle="modal" data-bs-target="#editOwnerModal"
+                data-rfc="{{dueño.rfc}}" data-nombre="{{dueño.nombre}}" data-app="{{dueño.app}}"
+                data-apm="{{dueño.apm}}" data-tel="{{dueño.tel}}" data-mail="{{dueño.mail}}">Modificar</button>
               <!--
   Botón de acción para activar/inactivar:
   - Si el usuario está activo, muestra "Eliminar" (desactivar)
@@ -92,21 +114,125 @@
     </div>
   </div>
 </main>
-<script>
 
+<!-- Modal para editar dueño -->
+<div class="modal fade" id="editOwnerModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered ">
+    <form id="editOwnerForm" method="POST" action="{{ url_for('BP_SuperUserRoutes.update_dueño') }}">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-dark w-100 text-center" style="display:block;">Editar Dueño</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label for="edit_rfc" class="form-label">RFC</label>
+              <input type="text" class="form-control custom-input" id="edit_rfc" name="rfc" readonly>
+            </div>
+            <div class="col-md-4">
+              <label for="edit_nombre" class="form-label">Nombre</label>
+              <input type="text" class="form-control custom-input" id="edit_nombre" name="nombre" required>
+            </div>
+            <div class="col-md-4">
+              <label for="edit_app" class="form-label">Apellido paterno</label>
+              <input type="text" class="form-control custom-input" id="edit_app" name="app" required>
+            </div>
+            <div class="col-md-4">
+              <label for="edit_apm" class="form-label">Apellido materno</label>
+              <input type="text" class="form-control custom-input" id="edit_apm" name="apm" required>
+            </div>
+            <div class="col-md-4">
+              <label for="edit_tel" class="form-label">Teléfono</label>
+              <input type="text" class="form-control custom-input" id="edit_tel" name="tel" required>
+            </div>
+            <div class="col-md-4">
+              <label for="edit_mail" class="form-label">Correo</label>
+              <input type="email" class="form-control custom-input" id="edit_mail" name="mail" required>
+            </div>
+
+            <!-- Dirección -->
+            <div class="col-md-4">
+              <label for="edit_pais" class="form-label">País</label>
+              <select class="form-select custom-input" id="edit_pais" name="paises" required onchange="selectPais(event)">
+                <option value="" disabled selected>Selecciona el país</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label for="edit_estado" class="form-label">Estado</label>
+              <select class="form-select custom-input" id="edit_estado" name="estados" required onchange="selectEstado(event)">
+                <option value="" disabled selected>Selecciona el estado</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label for="edit_municipio" class="form-label">Municipio</label>
+              <select class="form-select custom-input" id="edit_municipio" name="municipios" required
+                onchange="selectMunicipio(event)">
+                <option value="" disabled selected>Selecciona el municipio</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label for="edit_colonia" class="form-label">Colonia</label>
+              <select class="form-select custom-input" id="edit_colonia" name="idcolonia" required>
+                <option value="" disabled selected>Selecciona la colonia</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label for="edit_calle" class="form-label">Calle</label>
+              <input type="text" class="form-control custom-input" id="edit_calle" name="calle" required>
+            </div>
+            <div class="col-md-4">
+              <label for="edit_numero" class="form-label">Número</label>
+              <input type="text" class="form-control custom-input" id="edit_numero" name="numero" required>
+            </div>
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        </div>
+
+
+      </div>
+    </form>
+  </div>
+</div>
+<script src="{{ url_for('static', filename='js/location.js') }}"></script>
+<script>
   // Cuando cambia el select, envía el formulario automáticamente
- document.getElementById('filtro-select').addEventListener('change', function(){
+  document.getElementById('filtro-select').addEventListener('change', function () {
     document.getElementById('filtro-form').submit();
-});
+  });
   // Oculta automáticamente los mensajes flash flotantes después de 3 segundos
-  setTimeout(function() {
-    document.querySelectorAll('#flash-toast-container .flash-toast').forEach(function(toast) {
+  setTimeout(function () {
+    document.querySelectorAll('#flash-toast-container .flash-toast').forEach(function (toast) {
       toast.style.transition = 'opacity 0.5s';
       toast.style.opacity = '0';
-      setTimeout(function() {
+      setTimeout(function () {
         toast.style.display = 'none';
       }, 500);
     });
   }, 3000);
+
+  document.getElementById('editOwnerModal').addEventListener('show.bs.modal', event => {
+    const btn = event.relatedTarget;
+    document.getElementById('edit_rfc').value = btn.dataset.rfc;
+    document.getElementById('edit_nombre').value = btn.dataset.nombre;
+    document.getElementById('edit_app').value = btn.dataset.app;
+    document.getElementById('edit_apm').value = btn.dataset.apm;
+    document.getElementById('edit_tel').value = btn.dataset.tel;
+    document.getElementById('edit_mail').value = btn.dataset.mail;
+
+    loadAddressFields({
+      rfc: btn.dataset.rfc,
+      paisId: 'edit_pais',
+      estadoId: 'edit_estado',
+      municipioId: 'edit_municipio',
+      coloniaId: 'edit_colonia',
+      calleId: 'edit_calle',
+      numeroId: 'edit_numero'
+    });
+  });
 </script>
 {% endblock %}

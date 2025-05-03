@@ -1,0 +1,168 @@
+{% extends 'superuser/dashboard.html' %}
+
+{% block content %}
+<main class="main-content">
+    <h5 class="fw-bold mt-0 mb-2 text-orange">Lista de compañias</h5>
+    <div class="col-md-3 mb-4">
+        <a href="{{ url_for('app_routes.dashboard_superuser_viewsucursales') }}"
+          class="btn btn-warning text-dark fw-bold px-6 py-2 rounded-pill">Ver sucursales</a>
+      </div>
+    
+    <form id="filtro-form" method="GET" class="row g-2 mb-3">
+        <!-- Input para buscar por RFC -->
+        <div class="col-md-4">
+            <input type="text" name="obrfc" class="form-control custom-input" required
+                placeholder="Buscar compañia por RFC o nombre" value="{{ request.args.get('rfc', '') }}">
+        </div>
+        
+        <!-- Botón para aplicar los filtros -->
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Buscar</button>
+        </div>
+    </form>
+    <div class="bg-light p-4 rounded-4 shadow-sm position-relative mt-0">
+        <!-- Mensaje flash flotante -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div id="flash-toast-container">
+            {% for category, message in messages %}
+            <div class="flash-toast flash-{{ category }}">
+                {{ message }}
+                <span class="flash-toast-close" onclick="this.parentElement.style.display='none';">&times;</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+        <div class="d-flex align-items-center justify-content-between mb-4" style="gap: 1rem;">
+            <p class="m-0 font-weight-bold">* Elija la compañia a la que le desee agregar una sucursal</p>
+        </div>
+        <div class="row">
+            <div class="col-12 position-center">
+                <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+                    <table class="table table-striped text-center align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>RFC compañia</th>
+                                <th>Nombre</th>
+                                <th>Dueño</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for comp in companias %}
+                            <tr>
+                                <td>{{ comp.rfccomp }}</td>
+                                <td>{{ comp.nombre }}</td>
+                                <td>{{ comp.dueño }}</td>
+
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-primary mb-1 add-branch-btn"
+                                        data-rfc="{{ comp.rfccomp|trim }}">Agregar Sucursal</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- Modal Agregar Sucursal -->
+<div class="modal fade" id="branchModal" tabindex="-1" aria-labelledby="branchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="branchModalLabel">Agregar Sucursal</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <form id="add-branch-form" action="{{ url_for('BP_SuperUserRoutes.register_sucursal') }}" method="POST">
+                    <input type="hidden" id="modal_rfccomp" name="rfccomp">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="modal_sucursal_nombre" class="form-label">Nombre Sucursal:</label>
+                            <input class="form-control custom-input" type="text" id="modal_sucursal_nombre"
+                                name="nombre" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="modal_sucursal_paises" class="form-label">País:</label>
+                            <select class="form-select custom-input" id="modal_sucursal_paises" name="paises" required
+                                onchange="selectPais(event)">
+                                <option value="" disabled selected>Selecciona el país</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="modal_sucursal_estados" class="form-label">Estado:</label>
+                            <select class="form-select custom-input" id="modal_sucursal_estados" name="estados" required
+                                onchange="selectEstado(event)">
+                                <option value="" disabled selected>Selecciona el estado</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="modal_sucursal_municipios" class="form-label">Municipio:</label>
+                            <select class="form-select custom-input" id="modal_sucursal_municipios" name="municipios"
+                                required onchange="selectMunicipio(event)">
+                                <option value="" disabled selected>Selecciona el municipio</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="modal_sucursal_idcolonia" class="form-label">Colonia:</label>
+                            <select class="form-select custom-input" id="modal_sucursal_idcolonia" name="idcolonia"
+                                required>
+                                <option value="" disabled selected>Selecciona la colonia</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="modal_sucursal_calle" class="form-label">Calle:</label>
+                            <input class="form-control custom-input" type="text" id="modal_sucursal_calle" name="calle"
+                                required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="modal_sucursal_numero" class="form-label">Número:</label>
+                            <input class="form-control custom-input" type="text" id="modal_sucursal_numero"
+                                name="numero" required>
+                        </div>
+                    </div>
+                    <div class="text-end mt-4">
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-warning fw-bold">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts para modal y AJAX -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{{ url_for('static', filename='js/location.js') }}"></script>
+<script src="{{ url_for('static', filename='js/formHandler.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Init modal
+        var branchModal = new bootstrap.Modal(document.getElementById('branchModal'));
+        // Botones para abrir modal
+        document.querySelectorAll('.add-branch-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                var rfc = this.getAttribute('data-rfc');
+                document.getElementById('modal_rfccomp').value = rfc;
+                // Reset selects
+                ['paises', 'estados', 'municipios', 'idcolonia'].forEach(suffix => {
+                    var sel = document.getElementById('modal_sucursal_' + suffix);
+                    sel.innerHTML = '<option value="" disabled selected>' + sel.closest('select')?.placeholder + '</option>';
+                });
+                // Initialize country/state/municipality/colony selects
+                if (typeof initSelects === 'function') {
+                    initSelects('add-branch-form');
+                }
+                branchModal.show();
+            });
+        });
+        // Manejar envío de formulario con SweetAlert
+        handleFormWithSweetAlert('#add-branch-form');
+    });
+</script>
+{% endblock %}

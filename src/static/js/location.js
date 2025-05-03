@@ -5,7 +5,9 @@
 function initSelects(tabId = null) {
     const containers = tabId ? [document.getElementById(tabId)] : [
         document.getElementById('datos-personales'),
-        document.getElementById('datos-compania')
+        document.getElementById('datos-compania'),
+        document.getElementById('datos-usuario'),
+        document.getElementById('add-branch-form')
     ];
 
     containers.forEach(container => {
@@ -22,7 +24,7 @@ function initSelects(tabId = null) {
                     return response.json();
                 })
                 .then(data => {
-                    console.log("Países cargados para", container.id, ":", data);
+                    //console.log("Países cargados para", container.id, ":", data);
                     paisesSelect.innerHTML = '<option value="" selected>Selecciona el país</option>';
 
                     if (data && data.length > 0) {
@@ -107,7 +109,7 @@ function selectPais(event) {
             return response.json();
         })
         .then(data => {
-            console.log("Estados cargados:", data);
+            //console.log("Estados cargados:", data);
             const selectEst = container.querySelector('select[name="estados"]');
             if (!selectEst) {
                 console.error("No se encontró el select de estados en este contenedor");
@@ -138,40 +140,27 @@ function selectPais(event) {
  * @param {Event} event - Evento de cambio en el select de estados.
  */
 function selectEstado(event) {
-    const selectElement = event.target;
-    const estado_id = selectElement.value;
-    const container = findParentTab(selectElement);
+    const estado_id = event.target.value;
+    // Busca el formulario/contenedor más cercano
+    const container = event.target.closest('form') || document;
+    // Busca el select de municipio dentro de ese contenedor
+    let selectMun = container.querySelector('select[name="municipios"], #edit_municipio, #owner_municipios, #comp_municipios');
+    let selectCol = container.querySelector('select[name="idcolonia"], #edit_colonia, #owner_idcolonia, #comp_idcolonia');
+    
 
-    if (!container) {
-        console.error("No se pudo encontrar el contenedor padre");
-        return;
+    if (selectMun) {
+        selectMun.innerHTML = '<option value="" disabled selected>Selecciona el municipio</option>';
+    }
+    if (selectCol) {
+        selectCol.innerHTML = '<option value="" disabled selected>Selecciona la colonia</option>';
     }
 
-    resetDependentSelects(container, 2);
-
-    if (!estado_id) {
-        console.warn("No se seleccionó ningún estado");
-        return;
-    }
+    if (!estado_id) return;
 
     fetch("/get-municipios/" + estado_id, { method: "GET" })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Error al cargar municipios: " + response.status);
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
-            console.log("Municipios cargados:", data);
-            const selectMun = container.querySelector('select[name="municipios"]');
-            if (!selectMun) {
-                console.error("No se encontró el select de municipios en este contenedor");
-                return;
-            }
-
-            selectMun.innerHTML = '<option value="" disabled selected>Selecciona el municipio</option>';
-
-            if (data && data.length > 0) {
+            if (selectMun) {
                 data.forEach(mun => {
                     let option = document.createElement("option");
                     option.value = mun.id;
@@ -179,12 +168,7 @@ function selectEstado(event) {
                     selectMun.appendChild(option);
                 });
                 selectMun.hidden = false;
-            } else {
-                console.warn("No se encontraron municipios para el estado seleccionado");
             }
-        })
-        .catch(error => {
-            console.error("Error al cargar municipios:", error);
         });
 }
 
@@ -193,53 +177,27 @@ function selectEstado(event) {
  * @param {Event} event - Evento de cambio en el select de municipios.
  */
 function selectMunicipio(event) {
-    const selectElement = event.target;
-    const mun_id = selectElement.value;
-    const container = findParentTab(selectElement);
-
-    if (!container) {
-        console.error("No se pudo encontrar el contenedor padre");
-        return;
+    const municipio_id = event.target.value;
+    // Busca el formulario/contenedor más cercano
+    const container = event.target.closest('form') || document;
+    // Busca el select de colonia dentro de ese contenedor
+    let selectCol = container.querySelector('select[name="idcolonia"], #edit_colonia, #owner_idcolonia, #comp_idcolonia');
+    if (selectCol) {
+        selectCol.innerHTML = '<option value="" disabled selected>Selecciona la colonia</option>';
     }
-
-    resetDependentSelects(container, 3);
-
-    if (!mun_id) {
-        console.warn("No se seleccionó ningún municipio");
-        return;
-    }
-
-    fetch("/get-colonias/" + mun_id, { method: "GET" })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Error al cargar colonias: " + response.status);
-            }
-            return response.json();
-        })
+    if (!municipio_id) return;
+    fetch("/get-colonias/" + municipio_id)
+        .then(r => r.json())
         .then(data => {
-            console.log("Colonias cargadas:", data);
-            const selectCol = container.querySelector('select[name="idcolonia"]');
-            if (!selectCol) {
-                console.error("No se encontró el select de colonias en este contenedor");
-                return;
-            }
-
-            selectCol.innerHTML = '<option value="" disabled selected>Selecciona la colonia</option>';
-
-            if (data && data.length > 0) {
+            //console.log("Colonias que llegan:", data);
+            if (selectCol) {
                 data.forEach(col => {
                     let option = document.createElement("option");
                     option.value = col.id;
                     option.textContent = col.nombre;
                     selectCol.appendChild(option);
                 });
-                selectCol.hidden = false;
-            } else {
-                console.warn("No se encontraron colonias para el municipio seleccionado");
             }
-        })
-        .catch(error => {
-            console.error("Error al cargar colonias:", error);
         });
 }
 
@@ -250,8 +208,106 @@ function selectMunicipio(event) {
  */
 function findParentTab(element) {
     let current = element;
-    while (current && !current.classList.contains('tab-pane')) {
+    while (current && !(current.classList.contains('tab-pane') || current.tagName === 'FORM')) {
         current = current.parentElement;
     }
     return current;
+}
+
+
+/**
+ * Llena los selects de dirección (país, estado, municipio, colonia) y campos de calle/número.
+ * @param {Object} opts - Opciones para la función.
+ * @param {string} opts.rfc - RFC del usuario a consultar.
+ * @param {string} opts.paisId - ID del select de país.
+ * @param {string} opts.estadoId - ID del select de estado.
+ * @param {string} opts.municipioId - ID del select de municipio.
+ * @param {string} opts.coloniaId - ID del select de colonia.
+ * @param {string} opts.calleId - ID del input de calle.
+ * @param {string} opts.numeroId - ID del input de número.
+ */
+async function loadAddressFields({ rfc, paisId, estadoId, municipioId, coloniaId, calleId, numeroId }) {
+    const paisSelect = document.getElementById(paisId);
+    const estadoSelect = document.getElementById(estadoId);
+    const municipioSelect = document.getElementById(municipioId);
+    const coloniaSelect = document.getElementById(coloniaId);
+
+    // Limpiar selects
+    paisSelect.innerHTML = '<option value="" disabled selected>Selecciona el país</option>';
+    estadoSelect.innerHTML = '<option value="" disabled selected>Selecciona el estado</option>';
+    municipioSelect.innerHTML = '<option value="" disabled selected>Selecciona el municipio</option>';
+    coloniaSelect.innerHTML = '<option value="" disabled selected>Selecciona la colonia</option>';
+
+    try {
+        const resp = await fetch(`/get_dueño/${rfc}`);
+        if (!resp.ok) throw new Error('No se pudo obtener datos de dirección');
+        const data = await resp.json();
+
+        // Países
+        const paisesResp = await fetch('/get-paises');
+        const paises = await paisesResp.json();
+        paises.forEach(pais => {
+            let option = document.createElement('option');
+            option.value = pais.id;
+            option.textContent = pais.nombre;
+            if (pais.id == data.idpais) option.selected = true;
+            paisSelect.appendChild(option);
+        });
+
+        // Estados
+        const estadosResp = await fetch(`/get-estados/${data.idpais}`);
+        const estados = await estadosResp.json();
+        estados.forEach(estado => {
+            let option = document.createElement('option');
+            option.value = estado.id;
+            option.textContent = estado.nombre;
+            if (estado.id == data.idestado) option.selected = true;
+            estadoSelect.appendChild(option);
+        });
+
+        // Municipios
+        const municipiosResp = await fetch(`/get-municipios/${data.idestado}`);
+        const municipios = await municipiosResp.json();
+        municipios.forEach(mun => {
+            let option = document.createElement('option');
+            option.value = mun.id;
+            option.textContent = mun.nombre;
+            if (mun.id == data.idmunicipio) option.selected = true;
+            municipioSelect.appendChild(option);
+        });
+
+        // Colonias
+        const coloniasResp = await fetch(`/get-colonias/${data.idmunicipio}`);
+        const colonias = await coloniasResp.json();
+        //console.log('Datos del dueño:', data);
+        //console.log('ID municipio:', data.idmunicipio);
+        //console.log('ID colonia:', data.idcolonia);
+        //console.log('Colonias del municipio:', colonias);
+        let coloniaEncontrada = false;
+        colonias.forEach(col => {
+            let option = document.createElement('option');
+            option.value = col.id;
+            option.textContent = col.nombre;
+            if (col.id == data.idcolonia) {
+                option.selected = true;
+                coloniaEncontrada = true;
+            }
+            coloniaSelect.appendChild(option);
+        });
+        if (!coloniaEncontrada && data.idcolonia && data.colonia) {
+            // Agrega la colonia manualmente si no está en el array
+            let option = document.createElement('option');
+            option.value = data.idcolonia;
+            option.textContent = data.colonia + ' (No encontrada en municipio)';
+            option.selected = true;
+            coloniaSelect.appendChild(option);
+        }
+
+        // Calle y número
+        document.getElementById(calleId).value = data.calle || '';
+        document.getElementById(numeroId).value = data.numero || '';
+
+    } catch (error) {
+        console.error('Error al cargar dirección:', error);
+    }
 }
