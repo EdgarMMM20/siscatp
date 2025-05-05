@@ -1,6 +1,6 @@
-{# templates/partials/menu.html #}
 {% set idrol = session.get('rol') %}
 {% set usuario_nombre = session.get('usuario_nombre', 'Usuario') %}
+{% set nombre_puesto = session.get('nombre_puesto', '').lower() %}
 {% set base_menu = [] %}
 
 {% if idrol == '0' %}
@@ -10,7 +10,7 @@
         {'href': '/dashboard/superuser/sucursales', 'icon': 'home-outline', 'label': 'Sucursales'},
         {'href': '/dashboard/superuser/registeruser', 'icon': 'person-add-outline', 'label': 'Agregar usuario'},
         {'href': '/dashboard/superuser/metricas', 'icon': 'bar-chart-outline', 'label': 'Métricas'},
-        {'href': '/dashboard/superuser/registrarpuesto', 'icon': 'briefcase-outline', 'label': 'Agregar puesto'},
+        {'href': '/dashboard/superuser/registerpuesto', 'icon': 'briefcase-outline', 'label': 'Agregar puesto'},
         {'href': '/dashboard/superuser/subirpost', 'icon': 'logo-facebook', 'label': 'Subir post'},
         {'href': '/dashboard/superuser/ajuste', 'icon': 'settings-outline', 'label': 'Ajuste'}
     ] %}
@@ -20,11 +20,23 @@
         {'href': '/dashboard/owner/registeruser', 'icon': 'person-add-outline', 'label': 'Agregar usuario'},
         {'href': '/dashboard/owner/gestionuser', 'icon': 'people-outline', 'label': 'Gestionar usuarios'}
     ] %}
-{% elif idrol == '4' %}
-    {% set base_menu = [
-        {'href': '/dashboard/capturista/principal', 'icon': 'grid-outline', 'label': 'Dashboard'},
-        {'href': '/dashboard/capturista/registrarpro', 'icon': 'cube-outline', 'label': 'Productos'}
-    ] %}
+{% elif idrol == '2' %}
+    {% if nombre_puesto == 'capturista' %}
+        {% set base_menu = [
+            {'href': '/dashboard/capturista/principal', 'icon': 'grid-outline', 'label': 'Dashboard'},
+            {'href': '/dashboard/capturista/registrarpro', 'icon': 'cube-outline', 'label': 'Productos'},
+            {'href': '/dashboard/capturista/registrarcaja', 'icon': 'cube-outline', 'label': 'Registrar caja'},
+            {'href': '/dashboard/capturista/registrartpro', 'icon': 'document-outline', 'label': 'Registrar tipo producto'},
+            {'href': '/dashboard/capturista/registrarzona', 'icon': 'location-outline', 'label': 'Zonas'}
+        ] %}
+        <!-- ejemplo para agregar mas sliber por puesto-->
+    {% elif nombre_puesto == 'almacenista' %}
+        {% set base_menu = [
+            {'href': '/dashboard/almacenista/principal', 'icon': 'grid-outline', 'label': 'Dashboard'},
+        ] %}
+    {% else %}
+        {% set base_menu = [] %}
+    {% endif %}
 {% endif %}
 {% block head %}
 <head>

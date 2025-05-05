@@ -378,39 +378,181 @@ def toggle_estado_compania(rfccomp):
 
 @BP_SuperUserRoutes.route('/registerUser', methods=['POST'])
 def register_user():
+    from datetime import datetime
     try:
-        conn= get_db()
-        cursor=conn.cursor()
-        # Validar campos requeridos
+        conn = get_db()
+        cursor = conn.cursor()
+
         required_fields = [
             "rfc", "nombre", "app", "apm", "sexo", "tel", "mail", "rol",
             "idcolonia", "calle", "numero", "usuario", "password"
         ]
-        missing_fields = [field for field in required_fields if not request.form.get(field)]
+        rol = request.form.get("rol")
+        if rol == "2":  # Empleado
+            required_fields += ["puesto", "empresa", "sucursal", "turno", "sueldo"]
+
+        # Verificar campos faltantes
+        missing_fields = [f for f in required_fields if not request.form.get(f)]
         if missing_fields:
             return jsonify({"error": f"Faltan campos: {', '.join(missing_fields)}"}), 400
-        cursor.execute("SELECT rfc FROM persona WHERE rfc= %s", (request.form.get("rfc"),))
-        if cursor.fetchone():
-            return jsonify({"error": "El rfc ya existe en la tabla persona"}), 400
-        cursor.execute("SELECT rfc from usuario WHERE rfc= %s", (request.form.get("rfc"),))
-        if cursor.fetchone():
-            return jsonify({"error": "El rfc ya existe en la tabla usuario"}), 400
 
-        cursor.execute("INSERT INTO persona (rfc, nombre, app, apm, sexo, tel, mail, rol, idcolonia, calle, numero,fechregis) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-        (request.form.get("rfc"), request.form.get("nombre"),
-         request.form.get("app"), request.form.get("apm"),
-         request.form.get("sexo"), request.form.get("tel"),
-         request.form.get("mail"), request.form.get("rol"),
-         request.form.get("idcolonia"), request.form.get("calle"),
-         request.form.get("numero"), fech))
+        rfc = request.form.get("rfc")
+
+        # Validación duplicados
+        cursor.execute("SELECT rfc FROM persona WHERE rfc = %s", (rfc,))
+        if cursor.fetchone():
+            return jsonify({"error": "El RFC ya existe en la tabla persona"}), 400
+
+        cursor.execute("SELECT rfc FROM usuario WHERE rfc = %s", (rfc,))
+        if cursor.fetchone():
+            return jsonify({"error": "El RFC ya existe en la tabla usuario"}), 400
+
+        # Insert persona
+        fecha_actual = datetime.now().strftime("%Y-%m-%d")
+        cursor.execute("""
+            INSERT INTO persona (rfc, nombre, app, apm, sexo, tel, mail, rol, idcolonia, calle, numero, fechregis)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (
+            rfc,
+            request.form.get("nombre"),
+            request.form.get("app"),
+            request.form.get("apm"),
+            request.form.get("sexo"),
+            request.form.get("tel"),
+            request.form.get("mail"),
+            rol,
+            request.form.get("idcolonia"),
+            request.form.get("calle"),
+            request.form.get("numero"),
+            fecha_actual
+        ))
         conn.commit()
 
-        cursor.execute("INSERT INTO usuario (rfc, usuario, password) VALUES (%s, %s, %s)", (request.form.get("rfc"), request.form.get("usuario"), request.form.get("password")))
+        # Insert usuario
+        cursor.execute("""
+            INSERT INTO usuario (rfc, usuario, password)
+            VALUES (%s, %s, %s)
+        """, (
+            rfc,
+            request.form.get("usuario"),
+            request.form.get("password")
+        ))
         conn.commit()
+
+        # Insert empleado si aplica
+        if rol == "2":
+            idpuesto = request.form.get("puesto")
+            idsucursal = request.form.get("sucursal")
+            idturno = request.form.get("turno")
+
+            # Verificar existencia en hopuestosu
+            cursor.execute("""
+                SELECT 1 FROM hopuestosu WHERE idpuesto = %s AND idsucursal = %s AND idturno = %s
+            """, (idpuesto, idsucursal, idturno))
+            if not cursor.fetchone():
+                return jsonify({"error": "No existe combinación válida en hopuestosu para el puesto, sucursal y turno seleccionados"}), 400
+
+            # Insert en empleado
+            cursor.execute("""
+                INSERT INTO empleado (rfc, idpuesto, idsucursal, idturno, fechcon, sueldo, estatus)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """, (
+                rfc,
+                idpuesto,
+                idsucursal,
+                idturno,
+                fecha_actual,
+                request.form.get("sueldo"),
+                1
+            ))
+            conn.commit()
+
         return jsonify({"message": "Usuario registrado exitosamente"}), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+    finally:
+        if 'cursor' in locals(): cursor.close()
+        if 'conn' in locals(): conn.close()
+
+@BP_SuperUserRoutes.route('/registerPuesto', methods=['POST'])
+def register_puesto():
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+
+        idpuesto = request.form.get("IDPuesto")
+        idsucursal = request.form.get("Sucursal")
+        nombre = request.form.get("nomp")
+        descripcion = request.form.get("descripcionp")
+        idturno = request.form.get("Turno")
+        hentrada = request.form.get("horaenp")
+        hsalida = request.form.get("horasap")
+
+        # Validar campos requeridos
+        if not all([idpuesto, idsucursal, nombre, descripcion, idturno, hentrada, hsalida]):
+            return jsonify({"error": "Faltan campos requeridos"}), 400
+
+        # Validar que hora entrada < hora salida
+        cursor.execute("SELECT TIME(%s) < TIME(%s)", (hentrada, hsalida))
+        if cursor.fetchone()[0] is False:
+            return jsonify({"error": "La hora de entrada debe ser menor que la de salida."}), 400
+
+        # Insertar puesto si no existe aún
+        cursor.execute("""
+            SELECT * FROM puesto WHERE idpuesto = %s AND idsucursal = %s
+        """, (idpuesto, idsucursal))
+        if not cursor.fetchone():
+            cursor.execute("""
+                INSERT INTO puesto (idpuesto, idsucursal, nombre, descripcion)
+                VALUES (%s, %s, %s, %s)
+            """, (idpuesto, idsucursal, nombre, descripcion))
+            conn.commit()
+
+        # Verificar traslape de horarios existentes
+        cursor.execute("""
+            SELECT idturno, hentrada, hsalida
+            FROM hopuestosu
+            WHERE idpuesto = %s AND idsucursal = %s
+              AND hentrada IS NOT NULL AND hsalida IS NOT NULL
+              AND (hentrada < CAST(%s AS TIME) AND hsalida > CAST(%s AS TIME))
+        """, (idpuesto, idsucursal, hsalida, hentrada))
+        traslapado = cursor.fetchone()
+
+        # 🔍 Mostrar en consola para debugging
+        if traslapado:
+            print(f"Traslape detectado con turno existente: "
+                  f"Turno={traslapado[0]}, Entrada={traslapado[1]}, Salida={traslapado[2]}")
+            return jsonify({
+                "error": f"Horario en conflicto con el turno {traslapado[0]}: "
+                         f"{traslapado[1]} - {traslapado[2]}"
+            }), 400
+        else:
+            print("No hay traslapes detectados con horarios existentes.")
+
+        # Validar duplicado exacto
+        cursor.execute("""
+            SELECT * FROM hopuestosu 
+            WHERE idpuesto = %s AND idsucursal = %s AND idturno = %s
+        """, (idpuesto, idsucursal, idturno))
+        if cursor.fetchone():
+            return jsonify({"error": "Ya existe este turno registrado para este puesto y sucursal."}), 400
+
+        # Insertar nuevo horario
+        cursor.execute("""
+            INSERT INTO hopuestosu (idpuesto, idsucursal, idturno, hentrada, hsalida)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (idpuesto, idsucursal, idturno, hentrada, hsalida))
+        conn.commit()
+
+        print("Registro exitoso de nuevo puesto y horario.")
+        return jsonify({"message": "Puesto y horario registrados correctamente"}), 200
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"error": str(e)}), 500
+
     finally:
         if 'cursor' in locals(): cursor.close()
         if 'conn' in locals(): conn.close()

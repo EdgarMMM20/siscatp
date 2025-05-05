@@ -1,119 +1,309 @@
 {% extends 'superuser/dashboard.html' %}
 
 {% block content %}
-    <main class="main-content">
-        <h5 class="fw-bold text-orange mb-2">Registro de usuario</h5>
-        <div class="bg-white p-4 rounded-4 shadow-sm mb-5">
-            <form id="datos-usuario" action="/registerUser" method="POST">
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <label for="owner_rfc" class="form-label">RFC:</label>
-                        <input class="form-control custom-input" type="text" id="user_rfc" name="rfc" required>
+<main class="main-content">
+    <h5 class="fw-bold text-orange mb-2">Registro de usuario</h5>
+    <div class="bg-white p-4 rounded-4 shadow-sm mb-5">
+        <form id="datos-usuario" action="/registerUser" method="POST">
+            <div class="row g-3">
+                <!-- Datos personales -->
+                <div class="col-md-4">
+                    <label class="form-label">RFC:</label>
+                    <input class="form-control custom-input" type="text" name="rfc" required>
                 </div>
                 <div class="col-md-4">
-                    <label for="owner_nombre" class="form-label">Nombre:</label>
-                    <input class="form-control custom-input" type="text" id="user_nombre" name="nombre"
-                        required>
+                    <label class="form-label">Nombre:</label>
+                    <input class="form-control custom-input" type="text" name="nombre" required>
                 </div>
                 <div class="col-md-4">
-                    <label for="owner_app" class="form-label">Apellido paterno:</label>
-                    <input class="form-control custom-input" type="text" id="user_app" name="app" required>
+                    <label class="form-label">Apellido paterno:</label>
+                    <input class="form-control custom-input" type="text" name="app" required>
                 </div>
                 <div class="col-md-4">
-                    <label for="owner_apm" class="form-label">Apellido materno:</label>
-                    <input class="form-control custom-input" type="text" id="user_apm" name="apm" required>
+                    <label class="form-label">Apellido materno:</label>
+                    <input class="form-control custom-input" type="text" name="apm" required>
                 </div>
                 <div class="col-md-4">
-                    <label for="owner_sexo" class="form-label">Sexo:</label>
-                    <select class="form-select custom-input" id="user_sexo" name="sexo" required>
+                    <label class="form-label">Sexo:</label>
+                    <select class="form-select custom-input" name="sexo" required>
                         <option value="" disabled selected>Seleccionar</option>
                         <option value="M">Masculino</option>
                         <option value="F">Femenino</option>
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label for="owner_tel" class="form-label">Teléfono:</label>
-                    <input class="form-control custom-input" type="tel" id="user_tel" name="tel" required>
+                    <label class="form-label">Teléfono:</label>
+                    <input class="form-control custom-input" type="tel" name="tel" required>
                 </div>
                 <div class="col-md-4">
-                    <label for="owner_mail" class="form-label">Correo electrónico:</label>
-                    <input class="form-control custom-input" type="email" id="user_mail" name="mail"
-                        required>
+                    <label class="form-label">Correo electrónico:</label>
+                    <input class="form-control custom-input" type="email" name="mail" required>
                 </div>
+
+                <!-- Rol -->
                 <div class="col-md-4">
-                    <label for="owner_rol" class="form-label">Rol:</label>
+                    <label class="form-label">Rol:</label>
                     <select class="form-select custom-input" id="user_rol" name="rol" required>
                         <option value="" disabled selected>Seleccionar</option>
-                        {% for rol in roles %}
-                            <option value="{{ rol[0] }}">{{ rol[1] }}</option>
-                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Campos condicionales -->
+                <div class="col-md-4">
+                    <label class="form-label">Compañía:</label>
+                    <select class="form-select custom-input" id="empresa" name="empresa">
+                        <option value="" disabled selected>Selecciona una compañía</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-4">
+                    <label class="form-label">Sucursal:</label>
+                    <select class="form-select custom-input" id="sucursal" name="sucursal">
+                        <option value="" disabled selected>Selecciona una sucursal</option>
                     </select>
                 </div>
 
                 <div class="col-md-4">
-                    <label for="user_paises" class="form-label">País:</label>
-                    <select class="form-select custom-input" id="user_paises" name="paises" required
-                        onchange="selectPais(event)">
+                    <label class="form-label">Puesto:</label>
+                    <select class="form-select custom-input" id="emp_puesto" name="puesto">
+                        <option value="" disabled selected>Seleccionar</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-4">
+                    <label class="form-label">Turno:</label>
+                    <select class="form-select custom-input" id="emp_turno" name="turno">
+                        <option value="" disabled selected>Selecciona un turno</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Sueldo:</label>
+                    <input class="form-control custom-input" type="text" id="emp_sueldo" name="sueldo">
+                </div>
+
+                <!-- Dirección -->
+                <div class="col-md-4">
+                    <label class="form-label">País:</label>
+                    <select class="form-select custom-input" id="user_paises" name="paises" onchange="selectPais(event)" required>
                         <option value="" disabled selected>Selecciona el país</option>
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label for="user_estados" class="form-label">Estado:</label>
-                    <select class="form-select custom-input" id="user_estados" name="estados"
-                        onchange="selectEstado(event)">
+                    <label class="form-label">Estado:</label>
+                    <select class="form-select custom-input" id="user_estados" name="estados" onchange="selectEstado(event)" required>
                         <option value="" disabled selected>Selecciona el estado</option>
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label for="user_municipios" class="form-label">Municipio:</label>
-                    <select class="form-select custom-input" id="user_municipios" name="municipios"
-                        onchange="selectMunicipio(event)">
+                    <label class="form-label">Municipio:</label>
+                    <select class="form-select custom-input" id="user_municipios" name="municipios" onchange="selectMunicipio(event)" required>
                         <option value="" disabled selected>Selecciona el municipio</option>
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label for="user_idcolonia" class="form-label">Colonia:</label>
+                    <label class="form-label">Colonia:</label>
                     <select class="form-select custom-input" id="user_idcolonia" name="idcolonia" required>
                         <option value="" disabled selected>Selecciona la colonia</option>
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label for="user_calle" class="form-label">Calle:</label>
-                    <input class="form-control custom-input" type="text" id="user_calle" name="calle"
-                        required>
+                    <label class="form-label">Calle:</label>
+                    <input class="form-control custom-input" type="text" name="calle" required>
                 </div>
                 <div class="col-md-4">
-                    <label for="user_numero" class="form-label">Número de calle:</label>
-                    <input class="form-control custom-input" type="text" id="user_numero" name="numero"
-                        required>
+                    <label class="form-label">Número de calle:</label>
+                    <input class="form-control custom-input" type="text" name="numero" required>
+                </div>
+
+                <!-- Usuario -->
+                <div class="col-md-6">
+                    <label class="form-label">Usuario:</label>
+                    <input class="form-control custom-input" type="text" name="usuario" required>
                 </div>
                 <div class="col-md-6">
-                    <label for="user_usuario" class="form-label">Usuario:</label>
-                    <input class="form-control custom-input" type="text" id="user_usuario" name="usuario"
-                        required>
-                </div>
-                <div class="col-md-6">
-                    <label for="user_password" class="form-label">Contraseña:</label>
-                    <input class="form-control custom-input" type="password" id="user_password"
-                        name="password" required>
+                    <label class="form-label">Contraseña:</label>
+                    <input class="form-control custom-input" type="password" name="password" required>
                 </div>
             </div>
             <div class="text-center mt-4">
-                <button type="submit"
-                    class="btn btn-warning fw-bold px-5 py-2 rounded-pill">Guardar</button>
+                <button type="submit" class="btn btn-warning fw-bold px-5 py-2 rounded-pill">Guardar</button>
             </div>
         </form>
-    </div>  
-    </main>    
-<!-- Dependencias externas -->
+    </div>
+</main>
+
+<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
-<!-- Archivos JavaScript locales -->
 <script src="{{ url_for('static', filename='js/location.js') }}"></script>
 <script src="{{ url_for('static', filename='js/formHandler.js') }}"></script>
+
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        handleFormWithSweetAlert('#datos-usuario');
-        // handleFormWithSweetAlert('#otro-formulario');
+function toggleCamposPorRol(rol) {
+    const campos = {
+        puesto: document.getElementById("emp_puesto"),
+        compania: document.getElementById("empresa"),
+        sucursal: document.getElementById("sucursal"),
+        turno: document.getElementById("emp_turno"),
+        sueldo: document.getElementById("emp_sueldo")
+    };
+
+    const mostrar = (keys) => {
+        Object.entries(campos).forEach(([key, el]) => {
+            const container = el.closest(".col-md-4");
+            const activo = keys.includes(key);
+            if (container) container.style.display = activo ? "block" : "none";
+            el.required = activo;
+            if (!activo) el.value = ""; // limpiar valor
+        });
+    };
+
+    if (rol === "2") {
+        mostrar(["puesto", "compania", "sucursal", "turno", "sueldo"]);
+    } else if (rol === "1") {
+        mostrar(["compania"]);
+    } else {
+        mostrar([]);
+    }
+}
+
+// Aplicar al cargar
+window.addEventListener("DOMContentLoaded", () => {
+    toggleCamposPorRol("");
+});
+
+// Cambiar al seleccionar rol
+document.getElementById("user_rol").addEventListener("change", function () {
+    toggleCamposPorRol(this.value);
+});
+
+// Cargar roles
+fetch('/get-roles')
+    .then(res => res.json())
+    .then(data => {
+        const select = document.getElementById('user_rol');
+        data.forEach(r => {
+            const option = document.createElement('option');
+            option.value = r.id;
+            option.textContent = r.nombre;
+            select.appendChild(option);
+        });
     });
+
+// Compañías
+fetch('/get-companias')
+    .then(res => res.json())
+    .then(data => {
+        const select = document.getElementById('empresa');
+        data.forEach(c => {
+            const option = document.createElement('option');
+            option.value = c.rfccomp;
+            option.textContent = c.nombre;
+            select.appendChild(option);
+        });
+    });
+
+// Sucursales por compañía
+document.getElementById('empresa').addEventListener('change', function () {
+    const rfccomp = this.value;
+    fetch(`/get-sucursales-by-compania/${rfccomp}`)
+        .then(res => res.json())
+        .then(data => {
+            const select = document.getElementById('sucursal');
+            select.innerHTML = '<option value="">Selecciona una sucursal</option>';
+            data.forEach(s => {
+                const option = document.createElement('option');
+                option.value = s.id;
+                option.textContent = s.nombre;
+                select.appendChild(option);
+            });
+        });
+});
+
+// Al seleccionar una sucursal, cargar sus puestos
+document.getElementById('sucursal').addEventListener('change', function () {
+    const idsucursal = this.value;
+    const puestoSelect = document.getElementById('emp_puesto');
+    const turnoSelect = document.getElementById('emp_turno');
+
+    // Limpiar opciones anteriores
+    puestoSelect.innerHTML = '<option value="" disabled selected>Seleccionar</option>';
+    turnoSelect.innerHTML = '<option value="" disabled selected>Selecciona un turno</option>';
+
+    if (!idsucursal) return;
+
+    fetch(`/get-puestos-by-sucursal/${idsucursal}`)
+        .then(res => res.json())
+        .then(data => {
+            data.forEach(p => {
+                const option = document.createElement('option');
+                option.value = p.id;
+                option.textContent = p.nombre;
+                puestoSelect.appendChild(option);
+            });
+        });
+});
+
+// Al seleccionar un puesto, cargar turnos disponibles para ese puesto y sucursal
+document.getElementById('emp_puesto').addEventListener('change', function () {
+    const idpuesto = this.value;
+    const idsucursal = document.getElementById('sucursal').value;
+    const turnoSelect = document.getElementById('emp_turno');
+
+    turnoSelect.innerHTML = '<option value="" disabled selected>Selecciona un turno</option>';
+
+    if (!idpuesto || !idsucursal) return;
+
+    fetch(`/get-turnos-by-puesto-sucursal/${idpuesto}/${idsucursal}`)
+        .then(res => res.json())
+        .then(data => {
+            data.forEach(t => {
+                const option = document.createElement('option');
+                option.value = t.id;
+                option.textContent = t.nombre;
+                turnoSelect.appendChild(option);
+            });
+        });
+});
+
+// Enviar formulario con fetch y mostrar alertas
+document.getElementById("datos-usuario").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const form = e.target;
+    const data = new FormData(form);
+
+    fetch('/registerUser', {
+        method: 'POST',
+        body: data
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.error,
+                confirmButtonColor: '#dc3545'
+            });
+        } else {
+            Swal.fire({
+                icon: 'success',
+                title: 'Usuario registrado',
+                text: data.message || 'El usuario fue guardado correctamente.',
+                confirmButtonColor: '#ffc107'
+            });
+            form.reset();
+            toggleCamposPorRol(""); // Oculta campos condicionales
+        }
+    })
+    .catch(error => {
+        console.error("Error al registrar usuario:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo registrar el usuario.',
+            confirmButtonColor: '#dc3545'
+        });
+    });
+});
 </script>
-{% endblock %}      
+{% endblock %}
