@@ -6,7 +6,7 @@ body {
   
   .topbar {
     background-color: #00425A;
-    height: 200px;
+    height: 250px;
     color: white;
     display: flex;
     align-items: flex-start;        /* Alinea al inicio verticalmente */
@@ -96,7 +96,7 @@ body {
     position: absolute;
     bottom: 0;
     width: 6500px;              /* Largo para animación horizontal */
-    height: 300px;              /* Altura suficiente para mostrar la ola */
+    height: 250px;              /* Altura suficiente para mostrar la ola */
     background-image: url('/static/img/wd1.svg');
     background-repeat: repeat-x;
     background-position: bottom;
@@ -104,26 +104,39 @@ body {
     z-index: 0;
   }  
 
-.wave1 {
-  animation: waveAnim1 6s linear infinite;
+  .w1{
+    animation: w1 7s linear infinite;
 }
 
-.wave2 {
-  opacity: 0.5;
-  animation: waveAnim2 7s linear -.125s infinite, waveFloat 7s ease -125s infinite;
+.w2{
+    animation: w2 7s linear -.125s infinite, desplazamiento 7s ease -.125s infinite;
+    opacity: 0.5;
 }
 
-@keyframes waveAnim1 {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-600px); } /* No tan largo como el width */
+@keyframes w1 {
+    0%{
+        margin-left: 0;
+    }
+    100%{
+        margin-left: -1600px;
+    }
 }
 
-@keyframes waveAnim2 {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-600px); }
+@keyframes w2 {
+    0%{
+        margin-left: 0;
+    }
+    100%{
+        margin-left: -1600px;
+    }
 }
 
-@keyframes waveFloat {
-  0%, 100% { transform: translateY(-15px); }
-  50% { transform: translateY(10px); }
+@keyframes desplazamiento {
+    0%, 100%{
+        transform: translateY(-25px);
+    }
+
+    50%{
+        transform: translateY(10px);
+    }
 }
