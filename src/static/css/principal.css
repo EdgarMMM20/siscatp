@@ -1,0 +1,142 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f5f6f8;
+  }
+  
+  .topbar {
+    background-color: #00425A;
+    height: 250px;
+    color: white;
+    display: flex;
+    align-items: flex-start;        /* Alinea al inicio verticalmente */
+    justify-content: space-between;
+    padding: 20px 20px 20px 20px;   /* Espaciado superior, derecho, inferior, izquierdo */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: -1;
+    box-sizing: border-box;
+  }
+  
+  
+  /* HERO */
+  .hero-section {
+    margin-top: 60px;
+    height: 400px;
+    display: flex;
+    width: 100%;
+  }
+  
+  .hero-text {
+    width: 50%;
+    color: white;
+  }
+  
+  .hero-image {
+    width: 50%;
+  }
+  
+  .btn-warning {
+    width: auto;
+    min-width: unset;
+  }  
+
+  .feature-box {
+    background: #05031C;
+    color: white;
+    padding-top: 60px;
+    padding-bottom: 30px;
+    min-height: 300px;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 30px;
+    border-bottom-left-radius: 0 !important;
+    position: relative;
+    overflow: visible;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  .feature-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Imagen sobresaliente */
+  .feature-box img {
+    position: absolute;
+    top: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 130px;
+    height: 130px;
+    object-fit: contain;
+  }
+
+  .wave-container {
+    position: fixed;     /* Antes: absolute */
+    top: 60px;
+    left: 0;
+    width: 100%;
+    height: 350px;
+    overflow: hidden;
+    z-index: -1;         /* Moverlo al fondo */
+    pointer-events: none;
+  }
+
+  .wave {
+    position: absolute;
+    bottom: 0;
+    width: 6500px;              /* Largo para animación horizontal */
+    height: 250px;              /* Altura suficiente para mostrar la ola */
+    background-image: url('/static/img/wd1.svg');
+    background-repeat: repeat-x;
+    background-position: bottom;
+    background-size: contain;   /* o 'cover' si prefieres que rellene */
+    z-index: 0;
+  }  
+
+  .w1{
+    animation: w1 7s linear infinite;
+}
+
+.w2{
+    animation: w2 7s linear -.125s infinite, desplazamiento 7s ease -.125s infinite;
+    opacity: 0.5;
+}
+
+@keyframes w1 {
+    0%{
+        margin-left: 0;
+    }
+    100%{
+        margin-left: -1600px;
+    }
+}
+
+@keyframes w2 {
+    0%{
+        margin-left: 0;
+    }
+    100%{
+        margin-left: -1600px;
+    }
+}
+
+@keyframes desplazamiento {
+    0%, 100%{
+        transform: translateY(-25px);
+    }
+
+    50%{
+        transform: translateY(10px);
+    }
+}
