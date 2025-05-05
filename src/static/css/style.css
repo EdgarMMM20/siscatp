@@ -200,3 +200,29 @@ body {
   max-height: 400px; /* Esto sí limita la visibilidad */
   overflow-y: auto;
 }
+
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+
+  #barcode-container,
+  #barcode-container * {
+    visibility: visible !important;
+  }
+
+  #barcode-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    background: white;
+    text-align: center;
+  }
+
+  #barcode-container .btn {
+    display: none; /* Oculta botón en impresión */
+  }
+}

@@ -5,13 +5,24 @@ from db.db import *
 app_routes = Blueprint('app_routes', __name__)
 
 # Verifica sesión antes de mostrar los paneles
-def validar_sesion_y_rol(*roles_permitidos):
+def validar_sesion_y_rol(*roles_o_puestos_permitidos):
     def wrapper(func):
         @wraps(func)
         def decorated_function(*args, **kwargs):
-            if 'rol' not in session or session['rol'] not in roles_permitidos:
-                return redirect(url_for('general_bp.no_autorizado'))
-            return func(*args, **kwargs)
+            rol = session.get("rol")
+            puesto = session.get("nombre_puesto", "").lower()
+
+            # Acceso por rol directo
+            if rol in roles_o_puestos_permitidos:
+                return func(*args, **kwargs)
+
+            # Si es empleado (rol 2), validar por puesto
+            if rol == "2":
+                for item in roles_o_puestos_permitidos:
+                    if item.lower() == puesto:
+                        return func(*args, **kwargs)
+
+            return redirect(url_for("general_bp.no_autorizado"))
         return decorated_function
     return wrapper
 
@@ -59,13 +70,7 @@ def dashboard_superuser_registerpuesto():
 @app_routes.route('/dashboard/superuser/registeruser')
 @validar_sesion_y_rol("0")
 def dashboard_superuser_registeruser():
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT idrol, nombre FROM rol")
-    roles = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return render_template('superuser/registerUser.html',roles=roles)
+    return render_template('superuser/registerUser.html')
     
 @app_routes.route('/dashboard/superuser/metricas')
 @validar_sesion_y_rol("0")
@@ -76,6 +81,11 @@ def dashboard_superuser_metricas():
 @validar_sesion_y_rol("0")
 def dashboard_superuser_subirpost():
     return render_template('superuser/subirpost.html')
+
+@app_routes.route('/dashboard/superuser/ajuste')
+@validar_sesion_y_rol("0")
+def dashboard_superuser_ajuste():
+    return render_template('superuser/ajuste.html')
 
 #---------------------------- RUTAS PARA EL DUEÑO ---------------------------------------
 @app_routes.route('/dashboard/owner/principal')
@@ -91,26 +101,26 @@ def dashboard_owner_registeruser():
 
 #---------------------------- RUTAS PARA CAPTURISTA ---------------------------------------
 @app_routes.route('/dashboard/capturista/principal')
-@validar_sesion_y_rol("4")
+@validar_sesion_y_rol("capturista")
 def dashboard_capturista():
     return render_template('capturista/dashboard.html')
 
 @app_routes.route('/dashboard/capturista/registrarcaja')
-@validar_sesion_y_rol("4")
+@validar_sesion_y_rol("capturista")
 def dashboard_capturista_registrarcaja():
     return render_template('capturista/registrarcaja.html')
 
 @app_routes.route('/dashboard/capturista/registrarpro')
-@validar_sesion_y_rol("4")
+@validar_sesion_y_rol("0", "capturista")
 def dashboard_capturista_registrarpro():
     return render_template('capturista/registrarpro.html')
 
 @app_routes.route('/dashboard/capturista/registrartpro')
-@validar_sesion_y_rol("4")
+@validar_sesion_y_rol("capturista")
 def dashboard_capturista_registrartpro():
     return render_template('capturista/registrartpro.html')
 
 @app_routes.route('/dashboard/capturista/registrarzona')
-@validar_sesion_y_rol("4")
+@validar_sesion_y_rol("capturista")
 def dashboard_capturista_registrarzona():
     return render_template('capturista/registrarzona.html')

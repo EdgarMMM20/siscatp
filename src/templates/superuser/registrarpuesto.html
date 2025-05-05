@@ -1,7 +1,158 @@
 {% extends 'superuser/dashboard.html' %}
 
 {% block content %}
-    <main class="main-content">
-        
-    </main>      
-{% endblock %}      
+<main class="main-content">
+    <h5 class="fw-bold text-orange mb-2">Registro de puesto</h5>
+    <div class="bg-white p-4 rounded-4 shadow-sm mb-5">
+        <form id="formPuesto" action="/registerPuesto" method="POST">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="IDPuesto" class="form-label">ID Puesto:</label>
+                    <input class="form-control custom-input" type="text" id="IDPuesto" name="IDPuesto" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="Empresa" class="form-label">Compañia:</label>
+                    <select class="form-select custom-input" id="Empresa" name="Empresa" required>
+                        <option value="" disabled selected>Selecciona una compañia</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="Sucursal" class="form-label">Sucursal:</label>
+                    <select class="form-select custom-input" id="Sucursal" name="Sucursal" required>
+                        <option value="" disabled selected>Selecciona una sucursal</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="Turno" class="form-label">Turno:</label>
+                    <select class="form-select custom-input" id="Turno" name="Turno" required>
+                        <option value="" disabled selected>Selecciona un turno</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="nomp" class="form-label">Nombre:</label>
+                    <input class="form-control custom-input" type="text" id="nomp" name="nomp" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="descripcionp" class="form-label">Descripción:</label>
+                    <input class="form-control custom-input" type="text" id="descripcionp" name="descripcionp" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="horasTrabajo" class="form-label">Cantidad de horas:</label>
+                    <input class="form-control custom-input" type="number" id="horasTrabajo" name="horasTrabajo" min="1" max="24" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="horaenp" class="form-label">Hora de entrada:</label>
+                    <input class="form-control custom-input" type="time" id="horaenp" name="horaenp" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="horasap" class="form-label">Hora de salida (auto):</label>
+                    <input class="form-control custom-input" type="time" id="horasap" name="horasap" readonly required>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-warning fw-bold px-5 py-2 rounded-pill">Guardar</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<script>
+document.getElementById('horaenp').addEventListener('change', calcularHoraSalida);
+document.getElementById('horasTrabajo').addEventListener('input', calcularHoraSalida);
+
+function calcularHoraSalida() {
+    const entrada = document.getElementById('horaenp').value;
+    const horas = parseInt(document.getElementById('horasTrabajo').value, 10);
+    if (entrada && horas > 0) {
+        const [h, m] = entrada.split(':').map(Number);
+        const nuevaHora = new Date(0, 0, 0, h, m);
+        nuevaHora.setHours(nuevaHora.getHours() + horas);
+        document.getElementById('horasap').value = nuevaHora.toTimeString().slice(0, 5);
+    }
+}
+
+// Cargar compañías
+fetch('/get-companias')
+    .then(res => res.json())
+    .then(data => {
+        const empresaSelect = document.getElementById('Empresa');
+        data.forEach(c => {
+            const option = document.createElement('option');
+            option.value = c.rfccomp;
+            option.textContent = c.nombre;
+            empresaSelect.appendChild(option);
+        });
+    });
+
+// Cargar sucursales al seleccionar compañía
+document.getElementById('Empresa').addEventListener('change', function () {
+    const rfccomp = this.value;
+    fetch(`/get-sucursales-by-compania/${rfccomp}`)
+        .then(res => res.json())
+        .then(data => {
+            const sucursalSelect = document.getElementById('Sucursal');
+            sucursalSelect.innerHTML = '<option value="">Selecciona una sucursal</option>';
+            data.forEach(s => {
+                const option = document.createElement('option');
+                option.value = s.id;
+                option.textContent = s.nombre;
+                sucursalSelect.appendChild(option);
+            });
+        });
+});
+
+// Cargar turnos
+fetch('/get-turnos')
+    .then(res => res.json())
+    .then(data => {
+        const turnoSelect = document.getElementById('Turno');
+        data.forEach(t => {
+            const option = document.createElement('option');
+            option.value = t.id;
+            option.textContent = t.nombre;
+            turnoSelect.appendChild(option);
+        });
+    });
+
+// Envío AJAX
+document.getElementById('formPuesto').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const form = e.target;
+    const data = new FormData(form);
+
+    fetch('/registerPuesto', {
+        method: 'POST',
+        body: data
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.error,
+                confirmButtonColor: '#dc3545'
+            });
+        } else {
+            Swal.fire({
+                icon: 'success',
+                title: 'Puesto registrado',
+                text: data.message || 'El puesto fue guardado correctamente.',
+                confirmButtonColor: '#ffc107'
+            });
+            form.reset();
+        }
+    })
+    .catch(error => {
+        console.error("Error al registrar puesto:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo registrar el puesto.',
+            confirmButtonColor: '#dc3545'
+        });
+    });
+});
+</script>
+{% endblock %}
+

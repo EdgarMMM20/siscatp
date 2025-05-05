@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
 from config.bp_config import register_blueprints
-
+from datetime import timedelta
 
 
 def create_app():
@@ -15,6 +15,8 @@ def create_app():
 
     # Clave secreta para sesiones
     app.secret_key = os.getenv("SECRET_KEY_JWT", "clave_por_defecto_segura")
+    
+    app.permanent_session_lifetime = timedelta(hours=5)
 
     # Habilitar CORS
     CORS(app)
