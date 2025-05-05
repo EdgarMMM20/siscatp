@@ -6,18 +6,20 @@ body {
   
   .topbar {
     background-color: #00425A;
-    height: 60px;
+    height: 200px;
     color: white;
     display: flex;
-    align-items: center;
+    align-items: flex-start;        /* Alinea al inicio verticalmente */
     justify-content: space-between;
-    padding: 0 20px;
+    padding: 20px 20px 20px 20px;   /* Espaciado superior, derecho, inferior, izquierdo */
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1050;
+    z-index: -1;
+    box-sizing: border-box;
   }
+  
   
   /* HERO */
   .hero-section {
@@ -80,43 +82,45 @@ body {
   }
 
   .wave-container {
-    position: absolute;
+    position: fixed;     /* Antes: absolute */
     top: 60px;
     left: 0;
     width: 100%;
-    height: 300px; /* más alto para visualizar el SVG */
+    height: 350px;
     overflow: hidden;
-    z-index: 0;
+    z-index: -1;         /* Moverlo al fondo */
+    pointer-events: none;
   }
 
-.wave {
-  position: absolute;
-  width: 6000px;
-  height: 100%;
-  background-image: url('/static/img/wd1.svg'); /* asegúrate de que exista */
-  background-repeat: repeat-x;
-  background-position: bottom;
-  background-size: cover;
-  bottom: 0;
-}
+  .wave {
+    position: absolute;
+    bottom: 0;
+    width: 6500px;              /* Largo para animación horizontal */
+    height: 300px;              /* Altura suficiente para mostrar la ola */
+    background-image: url('/static/img/wd1.svg');
+    background-repeat: repeat-x;
+    background-position: bottom;
+    background-size: contain;   /* o 'cover' si prefieres que rellene */
+    z-index: 0;
+  }  
 
 .wave1 {
-  animation: waveAnim1 7s linear infinite;
+  animation: waveAnim1 6s linear infinite;
 }
 
 .wave2 {
   opacity: 0.5;
-  animation: waveAnim2 7s linear infinite, waveFloat 7s ease-in-out infinite;
+  animation: waveAnim2 7s linear -.125s infinite, waveFloat 7s ease -125s infinite;
 }
 
 @keyframes waveAnim1 {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-1600px); }
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-600px); } /* No tan largo como el width */
 }
 
 @keyframes waveAnim2 {
   0% { transform: translateX(0); }
-  100% { transform: translateX(-1600px); }
+  100% { transform: translateX(-600px); }
 }
 
 @keyframes waveFloat {
