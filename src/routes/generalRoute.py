@@ -16,7 +16,11 @@ general_bp = Blueprint("general_bp", __name__)
 
 @general_bp.route("/")
 def index():
-    return redirect(url_for("general_bp.login"))
+    return redirect(url_for("general_bp.principal"))
+
+@general_bp.route("/principal")
+def principal():
+    return render_template("general/principal.html")
 
 @general_bp.route("/login", methods=["GET", "POST"])
 def login():

@@ -26,6 +26,9 @@ def validar_sesion_y_rol(*roles_o_puestos_permitidos):
         return decorated_function
     return wrapper
 
+# ---------------------------- RUTAS DEL SISTEMA GENERAL ---------------------------------------
+
+
 # ---------------------------- RUTAS PARA EL SUPERUSUARIO ---------------------------------------
 @app_routes.route('/dashboard/superuser/principal')
 @validar_sesion_y_rol("0")
