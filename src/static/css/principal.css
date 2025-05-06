@@ -18,10 +18,13 @@ body {
     right: 0;
     z-index: -1;
     box-sizing: border-box;
+    transition: top 0.4s ease-in-out;
   }
-  
-  
-  /* HERO */
+
+  .topbar-hide {
+    top: -300px;
+  }
+
   .hero-section {
     margin-top: 60px;
     height: 400px;
@@ -32,25 +35,66 @@ body {
   .hero-text {
     width: 50%;
     color: white;
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
   }
   
   .hero-image {
     width: 50%;
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+    animation: floatHero 4s ease-in-out infinite;
+  }
+
+  @keyframes floatHero {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);  /* Subida suave */
+    }
   }
   
+  .hero-hide {
+    opacity: 0;
+    transform: translateY(-20px);
+    pointer-events: none;
+  }
+
+  @media (max-width: 767px) {
+    .hero-image {
+      display: none !important;
+    }
+  
+    .hero-text {
+      width: 100% !important;
+      padding: 2rem 1.5rem 0;        /* Agrega espacio arriba, elimina exceso abajo */
+      text-align: center;
+      align-items: center !important;
+      justify-content: flex-start !important;  /* Posiciona más arriba */
+    }
+  
+    .hero-text h1,
+    .hero-text p {
+      text-align: center;
+    }
+  }
+  
+
   .btn-warning {
     width: auto;
     min-width: unset;
   }  
 
   .feature-box {
-    background: #05031C;
+    background: linear-gradient(to top, #107594 0%, #083644 90%);
     color: white;
-    padding-top: 60px;
-    padding-bottom: 30px;
-    min-height: 300px;
+    padding-top: 40px;
+    padding-bottom: 20px;
+    max-width:250px;
+    margin-left: auto;
+    margin-right: auto;
+    min-height: 220px;
     border-top-left-radius: 30px;
-    border-top-right-radius: 12px;
+    border-top-right-radius: 0 !important;
     border-bottom-right-radius: 30px;
     border-bottom-left-radius: 0 !important;
     position: relative;
@@ -63,11 +107,25 @@ body {
     text-align: center;
     padding-left: 15px;
     padding-right: 15px;
+    opacity: 0;
+    transform: scale(0.9) translateY(30px);
+    transition: transform 0.4s ease, box-shadow 0.4s ease, opacity 0.4s ease;
+    animation: emergeBox 0.6s ease-out forwards;
   }
+
+  .feature-box h5 {
+    margin-top: 50px; /* Ajusta según lo que necesites */
+  }
+
+.feature-box p {
+  max-width: 90%;
+  font-size: 0.9rem;
+}
   
+  /*Hover que conserva escala + eleva */
   .feature-box:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    transform: scale(0.95) translateY(-5px);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.4);
   }
   
   /* Imagen sobresaliente */
@@ -76,9 +134,28 @@ body {
     top: -35px;
     left: 50%;
     transform: translateX(-50%);
-    width: 130px;
-    height: 130px;
+    width: 100px;
+    height: 100px;
     object-fit: contain;
+    transition: transform 0.4s ease;
+  }
+  
+  /*Imagen también flota hacia arriba */
+  .feature-box:hover img {
+    transform: translate(-50%, -10px);
+  }
+  
+  /* Animación de aparición */
+  @keyframes emergeBox {
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }  
+
+  .features-section {
+    padding-top: 0.5rem !important;  /* reduce aún más */
+    margin-top: -5rem;             /* sube la sección completa */
   }
 
   .wave-container {
@@ -90,6 +167,11 @@ body {
     overflow: hidden;
     z-index: -1;         /* Moverlo al fondo */
     pointer-events: none;
+    transition: top 0.4s ease-in-out;
+  }
+
+  .wave-hide {
+    top: -300px;
   }
 
   .wave {
