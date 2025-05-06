@@ -41,7 +41,7 @@
   </section>
 
   <!-- Características -->
-  <section class="features-section text-center py-5">
+  <section class="features-section text-center">
     <h2 class="fw-bold mb-5">¿Qué te ofrece SISCATP?</h2>
     <div class="container">
       <div class="row g-4">
@@ -78,4 +78,30 @@
   </section>
 
 </body>
+<script>
+  let lastScrollTop = 0;
+  const topbar = document.querySelector('.topbar');
+  const heroText = document.querySelector('.hero-text');
+  const heroImage = document.querySelector('.hero-image');
+  const waveContainer = document.querySelector('.wave-container');
+
+  window.addEventListener('scroll', function () {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+    if (scrollTop > lastScrollTop) {
+      topbar?.classList.add('topbar-hide');
+      heroText?.classList.add('hero-hide');
+      heroImage?.classList.add('hero-hide');
+      waveContainer?.classList.add('wave-hide');
+    } else {
+      topbar?.classList.remove('topbar-hide');
+      heroText?.classList.remove('hero-hide');
+      heroImage?.classList.remove('hero-hide');
+      waveContainer?.classList.remove('wave-hide');
+    }
+
+    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+  });
+</script>
+
 </html>

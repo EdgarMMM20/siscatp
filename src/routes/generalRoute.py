@@ -213,11 +213,39 @@ def get_companias():
     try:
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("SELECT rfccomp, nombre FROM compania WHERE estatus = 1")
+
+        rol_actual = int(session.get("rol", 0))
+        puesto = session.get("puesto", "").lower() if session.get("puesto") else ""
+        rfc_usuario = session.get("rfc")
+
+        if rol_actual == 0:
+            # Superusuario: ve todas las compañías activas
+            cursor.execute("SELECT rfccomp, nombre FROM compania WHERE estatus = 1")
+
+        elif rol_actual == 1:
+            # Dueño: ve solo su propia compañía
+            cursor.execute("SELECT rfccomp, nombre FROM compania WHERE rfcdueno = %s AND estatus = 1", (rfc_usuario,))
+
+        elif rol_actual == 2 and puesto == "administrador":
+            # Administrador: ve la compañía donde trabaja
+            cursor.execute("""
+                SELECT c.rfccomp, c.nombre 
+                FROM compania c
+                JOIN sucursal s ON s.rfccomp = c.rfccomp
+                JOIN empleado e ON e.idsucursal = s.id
+                WHERE e.rfc = %s AND c.estatus = 1
+                LIMIT 1
+            """, (rfc_usuario,))
+
+        else:
+            return jsonify([])
+
         companias = [{"rfccomp": r[0], "nombre": r[1]} for r in cursor.fetchall()]
         return jsonify(companias)
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
     finally:
         cursor.close()
         conn.close()
