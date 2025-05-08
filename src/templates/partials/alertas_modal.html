@@ -1,0 +1,74 @@
+<div id="alertaOverlay" class="alerta-overlay">
+    <div id="alertaModal" class="alerta-modal fade-in">
+      <h2><ion-icon name="alert-circle-outline"></ion-icon> Avisos del sistema </h2>
+  
+      <div class="alerta-scroll" id="contenido-alertas">
+        <!-- Aquí se insertarán dinámicamente las alertas -->
+      </div>
+      <button class="btn-ok" onclick="cerrarAlerta()">Entendido</button>
+    </div>
+  </div>
+  
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  
+  <script>
+    function cerrarAlerta() {
+      const modal = document.getElementById('alertaModal');
+      modal.classList.remove('fade-in');
+      modal.classList.add('fade-out');
+      setTimeout(() => {
+        document.getElementById('alertaOverlay').style.display = 'none';
+      }, 500);
+    }
+    
+    document.addEventListener("DOMContentLoaded", () => {
+      fetch('/get-alertas')
+        .then(res => res.json())
+        .then(data => {
+          const container = document.getElementById("contenido-alertas");
+          if (!container) return;
+    
+          const crearItem = (texto, clase) => `
+            <div class="alert-item ${clase}">
+              <span>${texto}</span>
+              <span class="estado">${clase.charAt(0).toUpperCase() + clase.slice(1)}</span>
+            </div>`;
+    
+          let html = '';
+    
+          // Productos próximos a caducar
+          if (data.caducidades.length > 0) {
+            html += `<div class="section-title"><ion-icon name="time-outline"></ion-icon> Productos próximos a caducar</div>`;
+            data.caducidades.forEach(([cvcaja, nombre, dias]) => {
+              const clase = dias <= 3 ? 'critico' : dias <= 7 ? 'alerta' : 'advertencia';
+              html += crearItem(`${nombre} de la caja ${cvcaja} - ${dias} días restantes`, clase);
+            });
+          }
+    
+          // Productos con bajo stock
+          if (data.stock_bajo.length > 0) {
+            html += `<div class="section-title mt-4"><ion-icon name="cube-outline"></ion-icon> Productos con bajo stock</div>`;
+            data.stock_bajo.forEach(([nombre, cantidad]) => {
+              const clase = cantidad <= 2 ? 'critico' : cantidad <= 4 ? 'alerta' : 'advertencia';
+              html += crearItem(`${nombre} - ${cantidad} cajas disponibles`, clase);
+            });
+          }
+    
+          // Si hay alertas, agregar mensaje
+          if (data.caducidades.length > 0 || data.stock_bajo.length > 0) {
+            html += `<div class="footer-msg">Revisa estas situaciones antes de continuar con tus actividades.</div>`;
+          } else {
+            html = `<div class="alert-item advertencia text-center">No hay alertas en este momento.</div>`;
+          }
+    
+          container.innerHTML = html;
+        })
+        .catch(err => {
+          console.error("Error al cargar alertas:", err);
+        });
+    });
+    </script>
+    
+  
+  

@@ -106,7 +106,8 @@ def dashboard_owner_registeruser():
 @app_routes.route('/dashboard/capturista/principal')
 @validar_sesion_y_rol("capturista")
 def dashboard_capturista():
-    return render_template('capturista/dashboard.html')
+    mostrar_alerta = session.pop("mostrar_alerta", False)
+    return render_template('capturista/dashboard.html', mostrar_alerta=mostrar_alerta)
 
 @app_routes.route('/dashboard/capturista/registrarcaja')
 @validar_sesion_y_rol("capturista")

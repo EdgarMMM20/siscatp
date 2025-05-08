@@ -92,6 +92,7 @@ def login():
 
                 # Redirigir según el puesto
                 if nombre_puesto.lower() == "capturista":
+                    session["mostrar_alerta"] = True
                     return redirect(url_for("app_routes.dashboard_capturista"))
                 #elif nombre_puesto.lower() == "almacenista":
                     #return redirect(url_for("app_routes.dashboard_almacenista"))
@@ -340,6 +341,70 @@ def get_turnos_by_puesto_sucursal(idpuesto, idsucursal):
         return jsonify(turnos)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+@general_bp.route("/get-alertas", methods=["GET"])
+def get_alertas():
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+
+        rol = str(session.get("rol", ""))
+        rfc_usuario = session.get("rfc", "")
+        idsucursal = session.get("idsucursal", "")
+        rfccomp = None
+
+        if rol == "1":  # Dueño
+            cursor.execute("SELECT rfccomp FROM compania WHERE rfcdueno = %s AND estatus = 1", (rfc_usuario,))
+            resultado = cursor.fetchone()
+            if resultado:
+                rfccomp = resultado[0]
+
+        elif rol == "2":  # Empleado
+            cursor.execute("SELECT rfccomp FROM sucursal WHERE id = %s", (idsucursal,))
+            resultado = cursor.fetchone()
+            if resultado:
+                rfccomp = resultado[0]
+
+        elif rol == "0":  # Superusuario
+            rfccomp = session.get("rfccomp")  # opcional
+
+        if not rfccomp or not idsucursal:
+            return jsonify({"caducidades": [], "stock_bajo": []})
+
+        # Productos próximos a caducar en 15 días (por sucursal)
+        cursor.execute("""
+            SELECT c.cvcaja, p.nombre, DATEDIFF(c.fcaducidad, CURDATE()) AS dias
+            FROM cajas c
+            JOIN producto p ON c.cvpro = p.cvpro AND c.rfccomp = p.rfccomp
+            WHERE c.rfccomp = %s AND c.idsucursal = %s AND c.estado = 'disponible'
+              AND c.fcaducidad IS NOT NULL AND DATEDIFF(c.fcaducidad, CURDATE()) BETWEEN 0 AND 15
+            ORDER BY dias ASC
+        """, (rfccomp, idsucursal))
+        caducidades = cursor.fetchall()
+
+        # Productos con bajo stock (menos de 6 cajas, por sucursal)
+        cursor.execute("""
+            SELECT p.nombre, COUNT(*) AS cantidad
+            FROM cajas c
+            JOIN producto p ON c.cvpro = p.cvpro AND c.rfccomp = p.rfccomp
+            WHERE c.rfccomp = %s AND c.idsucursal = %s AND c.estado = 'disponible'
+            GROUP BY p.cvpro
+            HAVING cantidad <= 6
+            ORDER BY cantidad ASC
+        """, (rfccomp, idsucursal))
+        stock_bajo = cursor.fetchall()
+
+        return jsonify({
+            "caducidades": caducidades,
+            "stock_bajo": stock_bajo
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
     finally:
         cursor.close()
         conn.close()
