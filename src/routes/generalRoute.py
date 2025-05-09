@@ -69,11 +69,17 @@ def login():
             # Si es empleado, obtener su puesto y sucursal
             if rol_id == "2":
                 query_emp = """
-                    SELECT p.nombre AS nombre_puesto, s.nombre AS nombre_sucursal, e.idpuesto, e.idsucursal
-                    FROM empleado e
-                    LEFT JOIN puesto p ON e.idpuesto = p.idpuesto
-                    LEFT JOIN sucursal s ON e.idsucursal = s.id
-                    WHERE e.rfc = %s;
+                    SELECT 
+            p.nombre AS nombre_puesto,
+            s.nombre AS nombre_sucursal,
+            e.idpuesto,
+            e.idsucursal,
+            c.rfccomp
+        FROM empleado e
+        LEFT JOIN puesto p ON e.idpuesto = p.idpuesto
+        LEFT JOIN sucursal s ON e.idsucursal = s.id
+        LEFT JOIN compania c ON s.rfccomp = c.rfccomp
+        WHERE e.rfc = %s;
                 """
                 cursor.execute(query_emp, (rfc,))
                 emp_data = cursor.fetchone()
@@ -83,17 +89,20 @@ def login():
                     cerrar_sesion("El empleado no tiene puesto o sucursal asignada", "danger")
                     return redirect(url_for("general_bp.login"))
 
-                nombre_puesto, nombre_sucursal, idpuesto, idsucursal = emp_data
+                nombre_puesto, nombre_sucursal, idpuesto, idsucursal, rfc_comp = emp_data
 
                 session["nombre_puesto"] = nombre_puesto
                 session["nombre_sucursal"] = nombre_sucursal
                 session["idpuesto"] = idpuesto
                 session["idsucursal"] = idsucursal
+                session["rfccomp"] = rfc_comp
 
                 # Redirigir según el puesto
                 if nombre_puesto.lower() == "capturista":
                     session["mostrar_alerta"] = True
                     return redirect(url_for("app_routes.dashboard_capturista"))
+                elif nombre_puesto.lower() == "operador":
+                    return redirect(url_for("app_routes.dashboard_operador"))
                 #elif nombre_puesto.lower() == "almacenista":
                     #return redirect(url_for("app_routes.dashboard_almacenista"))
                 else:

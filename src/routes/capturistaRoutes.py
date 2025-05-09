@@ -1,7 +1,7 @@
 import secrets
 import string
 import base64
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session
 #from flask_jwt_extended import jwt_required
 from db.db import *
 from db.db import connect_to_database, get_db
@@ -50,6 +50,10 @@ def registrar_producto():
         cursor = conn.cursor()
 
         # Obtener datos del formulario
+        rfccomp = session.get("rfccomp")
+        if not rfccomp:
+            return jsonify({"error": "No se encontró la compañía en la sesión"}), 400
+
         cvpro = request.form.get("cvpro")
         idtipo = request.form.get("idtipo")
         nombre = request.form.get("nombre")
@@ -67,12 +71,12 @@ def registrar_producto():
         query = """
             INSERT INTO producto (
                 cvpro, idtipo, requiere_caducidad, nombre, marca, presentacion,
-                precio_compra, precio_venta, imagen, activo
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                precio_compra, precio_venta, imagen, activo, rfccomp
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
         values = (
             cvpro, idtipo, requiere_caducidad, nombre, marca, presentacion,
-            precio_compra, precio_venta, imagen, activo
+            precio_compra, precio_venta, imagen, activo, rfccomp
         )
         cursor.execute(query, values)
         conn.commit()
@@ -94,6 +98,10 @@ def registrar_caja():
     try:
         cursor = conn.cursor()
 
+        rfccomp = session.get("rfccomp")
+        if not rfccomp:
+            return jsonify({"error": "No se encontró la compañía en la sesión"}), 400
+
         # Obtener datos del formulario
         cvcaja = request.form.get("cvcaja")
         cvpro = request.form.get("cvpro")
@@ -109,12 +117,12 @@ def registrar_caja():
         query = """
             INSERT INTO cajas (
                 cvcaja, cvpro, idzonalmacen, cant, lote, precio,
-                fcaducidad, fingreso, estado
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                fcaducidad, fingreso, estado, rfccomp
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
         values = (
             cvcaja, cvpro, idzonalmacen, cant, lote, precio,
-            fcaducidad, fingreso, estado
+            fcaducidad, fingreso, estado, rfccomp
         )
 
         cursor.execute(query, values)
