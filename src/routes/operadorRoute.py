@@ -11,7 +11,7 @@ BP_operador = Blueprint('BP_operador', __name__)
 
 ESP32_TOKEN = "MiTokenSegur0!"
 ESP32_MAC = "AC:15:18:D7:9A:AC"
-DURACION_ACTIVACION = 5
+DURACION_ACTIVACION = 4
 
 # Cache local para IPs por MAC
 _ip_cache = {}
@@ -65,6 +65,7 @@ def consulta_caja():
 
 # === Clasificación por zonas basada en ID de zona ===
 def manejar_clasificacion_por_zona(idzona):
+    print(f"[DEBUG] Zona detectada: {idzona}")
     time.sleep(2)
 
     if idzona in [1, 2, 3, 7]:  # Productos comestibles comunes
@@ -88,35 +89,57 @@ def manejar_clasificacion_por_zona(idzona):
 def obtener_estado_sensor(mac=ESP32_MAC):
     ip = obtener_ip_por_mac(mac)
     if not ip:
-        print("IP no encontrada para MAC:", mac)
-        return False
+        print(f"[ERROR] IP no encontrada para MAC: {mac}")
+        return None
     try:
         response = requests.get(f"http://{ip}/estado_sensor?token={ESP32_TOKEN}", timeout=5)
-        if response.status_code == 200:
-            return response.json().get("sensorActivo") == "true"
-    except Exception as e:
-        print("Error al obtener estado del sensor:", e)
-    return False
+        response.raise_for_status()
+        data = response.json()
+        estado = data.get('sensorActivo', None)
+
+        # Solo será True si es booleano True, ignora "true" como string
+        return estado is True
+    except requests.exceptions.RequestException as e:
+        print(f"[ERROR] Fallo al conectar con ESP32 ({ip}): {e}")
+    except ValueError as ve:
+        print(f"[ERROR] Respuesta no es JSON válido: {ve}")
+    return None
+
 
 # === Verificación automática ===
 def verificar_sensor_duracion_automatico(duracion, mac=ESP32_MAC):
     tiempo_activo = 0
     estado_anterior = None
+    ultimo_tiempo_mostrado = -1
+
     while True:
         activo = obtener_estado_sensor(mac)
+
+        # Imprimir solo si el estado cambia
+        if activo != estado_anterior:
+            if activo:
+                print("→ Sensor activo, iniciando conteo...")
+            else:
+                print("→ Sensor inactivo, reiniciando contador.")
+            estado_anterior = activo
+
         if activo:
             tiempo_activo += 1
-            if estado_anterior != True:
-                print("Sensor activo, contando...")
+
+            # Mostrar conteo solo si cambió
+            if tiempo_activo != ultimo_tiempo_mostrado:
+                print(f"[DEBUG] Tiempo activo: {tiempo_activo}")
+                ultimo_tiempo_mostrado = tiempo_activo
+
             if tiempo_activo >= duracion:
-                activar_servo('servo2', mac)
+                print(f"Activando servo2 tras {duracion} segundos activos.")
+                activar_servo('servo2')
                 tiempo_activo = 0
-            estado_anterior = True
+                ultimo_tiempo_mostrado = -1  # Reinicia para volver a imprimir desde 1
         else:
-            if estado_anterior != False:
-                print("Sensor inactivo.")
             tiempo_activo = 0
-            estado_anterior = False
+            ultimo_tiempo_mostrado = -1  # Reinicia contador visual
+
         time.sleep(1)
 
 def iniciar_verificacion():

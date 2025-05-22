@@ -37,12 +37,14 @@
 
         <div class="col-md-4">
           <label for="precio_compra">Precio de compra:</label>
-          <input class="form-control custom-input" type="number" step="0.01" id="precio_compra" name="precio_compra" required>
+          <input class="form-control custom-input" type="number" step="0.01" id="precio_compra" name="precio_compra"
+            required>
         </div>
 
         <div class="col-md-4">
           <label for="precio_venta">Precio de venta:</label>
-          <input class="form-control custom-input" type="number" step="0.01" id="precio_venta" name="precio_venta" required>
+          <input class="form-control custom-input" type="number" step="0.01" id="precio_venta" name="precio_venta"
+            required>
         </div>
 
         <div class="col-md-4">
@@ -66,7 +68,9 @@
             <option value="0">Inactivo</option>
           </select>
         </div>
-
+        <div id="barcode-section" style="display:none;" class="col-md-6 text-center">
+          <video id="camera" class="border p-3" style="width: 100%; height: 200px;" autoplay></video>
+        </div>
       </div>
 
       <div class="text-center mt-4">
@@ -78,9 +82,12 @@
 
 <!-- JS para llenar dinámicamente el select de tipo de producto -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr"></script>
+<script src="{{ url_for('static', filename='js/barcode.js')}}"></script>
+
 <script>
+  // Registrar producto con fetch
   document.addEventListener("DOMContentLoaded", function () {
-    // Cargar tipos de producto
     fetch("/get-tipopro", { method: "GET" })
       .then(response => response.json())
       .then(data => {
@@ -97,7 +104,6 @@
         console.error("Error al cargar tipos de producto:", error);
       });
 
-    // Registrar producto con fetch
     const form = document.getElementById("formProducto");
     form.addEventListener("submit", function (event) {
       event.preventDefault();
@@ -108,31 +114,30 @@
         method: "POST",
         body: formData
       })
-      .then(response => {
-        if (!response.ok) throw new Error("Error en el servidor");
-        return response.json();
-      })
-      .then(data => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Producto registrado',
-          text: data.msg,
-          confirmButtonColor: '#ffc107'
+        .then(response => {
+          if (!response.ok) throw new Error("Error en el servidor");
+          return response.json();
+        })
+        .then(data => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Producto registrado',
+            text: data.msg,
+            confirmButtonColor: '#ffc107'
+          });
+          form.reset();
+        })
+        .catch(error => {
+          console.error("Error al registrar producto:", error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo registrar el producto.',
+            confirmButtonColor: '#dc3545'
+          });
         });
-        form.reset();
-      })
-      .catch(error => {
-        console.error("Error al registrar producto:", error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'No se pudo registrar el producto.',
-          confirmButtonColor: '#dc3545'
-        });
-      });
     });
   });
 </script>
 
 {% endblock %}
-

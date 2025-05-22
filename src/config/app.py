@@ -4,6 +4,7 @@ from flask import Flask
 from flask_cors import CORS
 from config.bp_config import register_blueprints
 from datetime import timedelta
+from routes.operadorRoute import iniciar_verificacion
 
 
 def create_app():
@@ -23,5 +24,7 @@ def create_app():
 
     # Registrar blueprints desde bp_config
     register_blueprints(app)
+    
+    iniciar_verificacion()
 
     return app

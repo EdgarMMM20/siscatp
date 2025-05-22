@@ -45,35 +45,30 @@
     function detenerMotor() {
         fetch(`${esp32Url}/motor/detener`)
             .then(res => res.text())
-            .then(alert)
             .catch(err => console.error("Error al detener motor:", err));
     }
 
     function iniciarMotor() {
         fetch(`${esp32Url}/motor/iniciar`)
             .then(res => res.text())
-            .then(alert)
             .catch(err => console.error("Error al iniciar motor:", err));
     }
 
     function controlarServo(servo) {
         fetch(`${esp32Url}/servo/${servo}`)
             .then(res => res.text())
-            .then(alert)
             .catch(err => console.error(`Error al controlar el servo ${servo}:`, err));
     }
 
     function activarSensor() {
         fetch(`${esp32Url}/sensor/activar`)
             .then(res => res.text())
-            .then(alert)
             .catch(err => console.error("Error al activar sensor:", err));
     }
 
     function desactivaSensor() {
         fetch(`${esp32Url}/sensor/desactivar`)
             .then(res => res.text())
-            .then(alert)
             .catch(err => console.error("Error al desactivar sensor:", err));
     }
 

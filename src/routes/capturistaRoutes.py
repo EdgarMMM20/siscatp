@@ -25,6 +25,62 @@ def get_zonalma():
     finally:
         if conn and conn.is_connected():
             conn.close()
+            
+@BP_CapturistaRoutes.route("/get-productos", methods=["GET"])
+def get_productos():
+    rfccomp = session.get("rfccomp")
+    if not rfccomp:
+        return jsonify({"error": "No se encontró la compañía en la sesión"}), 400
+
+    conn = get_db()
+    try:
+        cursor = conn.cursor(dictionary=True)
+        query = """
+            SELECT cvpro, nombre, requiere_caducidad 
+            FROM producto 
+            WHERE rfccomp = %s;
+        """
+        cursor.execute(query, (rfccomp,))
+        productos = cursor.fetchall()
+        cursor.close()
+        return jsonify(productos), 200
+    except Exception as e:
+        print("Error al obtener productos:", str(e))
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if conn and conn.is_connected():
+            conn.close()
+
+@BP_CapturistaRoutes.route("/get-producto-info/<cvpro>", methods=["GET"])
+def get_producto_info(cvpro):
+    conn = get_db()
+    try:
+        cursor = conn.cursor(dictionary=True)
+        query = """
+            SELECT z.idzonalma, p.requiere_caducidad
+            FROM producto p
+            JOIN tipopro t ON p.idtipo = t.idtipop
+            JOIN zonalmacen z ON t.idzonalma = z.idzonalma  -- Realizamos el JOIN con zonalmacen
+            WHERE p.cvpro = %s AND p.rfccomp = %s;
+        """
+        rfccomp = session.get("rfccomp")  # Obtenemos el rfccomp de la sesión
+        cursor.execute(query, (cvpro, rfccomp))
+        producto = cursor.fetchone()
+        cursor.close()
+        
+        if producto:
+            return jsonify({
+                "zona": producto["idzonalma"],
+                "requiere_caducidad": producto["requiere_caducidad"]
+            }), 200
+        else:
+            return jsonify({"error": "Producto no encontrado"}), 404
+    except Exception as e:
+        print("Error al obtener información del producto:", str(e))
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if conn and conn.is_connected():
+            conn.close()
 
 @BP_CapturistaRoutes.route("/get-tipopro", methods=["GET"])
 def get_tipopro():
