@@ -1,171 +1,159 @@
-<!DOCTYPE html>
-<html lang="es">
-
-<head>
-  <meta charset="UTF-8" />
-  <title>SISCATP - Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
-  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-</head>
-
-<body>
-  {% include 'partials/menu.html' %}
-  
-  {% block content %}
-  <main class="main-content">
-    <!-- Botones de acciones -->
-    <div class="mb-4 row g-2">
-      <div class="col-12 col-sm-6 col-md-3">
-        <a href="{{ url_for('app_routes.dashboard_capturista_registrarcaja') }}"
-          class="btn w-100 btn-warning text-dark fw-bold py-2 rounded-pill">Registrar caja</a>
-      </div>
-      <div class="col-12 col-sm-6 col-md-3">
-        <a href="{{ url_for('app_routes.dashboard_capturista_registrarpro') }}"
-          class="btn w-100 btn-warning text-dark fw-bold py-2 rounded-pill">Registrar producto</a>
-      </div>
-      <div class="col-12 col-sm-6 col-md-3">
-        <a href="{{ url_for('app_routes.dashboard_capturista_registrartpro') }}"
-          class="btn w-100 btn-warning text-dark fw-bold py-2 rounded-pill">Registrar tipo de producto</a>
-      </div>
-      <div class="col-12 col-sm-6 col-md-3">
-        <a href="{{ url_for('app_routes.dashboard_capturista_registrarzona') }}"
-          class="btn w-100 btn-warning text-dark fw-bold py-2 rounded-pill">Registrar zona de almacén</a>
-      </div>
+{% include 'partials/menu.html' %}
+{% if mostrar_alerta %}
+{% include 'partials/alertas_modal.html' %}
+{% endif %}
+{% block content %}
+<main class="main-content">
+  <!-- Botones de acciones -->
+  <div class="mb-4 row g-2">
+    <div class="col-12 col-sm-6 col-md-3">
+      <a href="{{ url_for('app_routes.dashboard_capturista_registrarcaja') }}"
+        class="btn w-100 btn-warning text-dark fw-bold py-2 rounded-pill">Registrar caja</a>
     </div>
+    <div class="col-12 col-sm-6 col-md-3">
+      <a href="{{ url_for('app_routes.dashboard_capturista_registrarpro') }}"
+        class="btn w-100 btn-warning text-dark fw-bold py-2 rounded-pill">Registrar producto</a>
+    </div>
+    <div class="col-12 col-sm-6 col-md-3">
+      <a href="{{ url_for('app_routes.dashboard_capturista_registrartpro') }}"
+        class="btn w-100 btn-warning text-dark fw-bold py-2 rounded-pill">Registrar tipo de producto</a>
+    </div>
+    <div class="col-12 col-sm-6 col-md-3">
+      <a href="{{ url_for('app_routes.dashboard_capturista_registrarzona') }}"
+        class="btn w-100 btn-warning text-dark fw-bold py-2 rounded-pill">Registrar zona de almacén</a>
+    </div>
+  </div>
 
-    <!--Tabla de cajas -->
-    <section class="bg-white p-4 rounded-4 shadow-sm mb-5">
-      <h5 class="fw-bold mb-4">Lista de cajas</h5>
+  <!--Tabla de cajas -->
+  <section class="bg-white p-4 rounded-4 shadow-sm mb-5">
+    <h5 class="fw-bold mb-4">Lista de cajas</h5>
 
-      <div class="table-responsive">
-        <table class="table table-bordered text-center align-middle">
-          <thead class="table-dark">
-            <tr>
-              <th>Clave caja</th>
-              <th>Clave producto</th>
-              <th>Zona almacén</th>
-              <th>Cantidad</th>
-              <th>Lote</th>
-              <th>Precio</th>
-              <th>Fecha de caducidad</th>
-              <th>Fecha de ingreso</th>
-              <th>Estado</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>12323MAHJ030812</td>
-              <td>MAHJ030812</td>
-              <td>3</td>
-              <td>12</td>
-              <td>LOT58972</td>
-              <td>276</td>
-              <td>12-08-2025</td>
-              <td>05/04/2025</td>
-              <td>disponible</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+    <div class="table-responsive">
+      <table class="table table-bordered text-center align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>Clave caja</th>
+            <th>Clave producto</th>
+            <th>Zona almacén</th>
+            <th>Cantidad</th>
+            <th>Lote</th>
+            <th>Precio</th>
+            <th>Fecha de caducidad</th>
+            <th>Fecha de ingreso</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>12323MAHJ030812</td>
+            <td>MAHJ030812</td>
+            <td>3</td>
+            <td>12</td>
+            <td>LOT58972</td>
+            <td>276</td>
+            <td>12-08-2025</td>
+            <td>05/04/2025</td>
+            <td>disponible</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
-    <!--Tabla de productos -->
-    <section class="bg-white p-4 rounded-4 shadow-sm">
-      <h5 class="fw-bold mb-4">Lista de productos</h5>
+  <!--Tabla de productos -->
+  <section class="bg-white p-4 rounded-4 shadow-sm">
+    <h5 class="fw-bold mb-4">Lista de productos</h5>
 
-      <div class="table-responsive">
-        <table class="table table-bordered text-center align-middle">
-          <thead class="table-dark">
-            <tr>
-              <th>Clave producto</th>
-              <th>Categoría</th>
-              <th>Nombre</th>
-              <th>Marca</th>
-              <th>Presentación</th>
-              <th>Precio de compra</th>
-              <th>Precio de venta</th>
-              <th>Imagen</th>
-              <th>Activo</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>MAHJ030812</td>
-              <td>refresco</td>
-              <td>coca cola retornable</td>
-              <td>coca cola</td>
-              <td>2.5L</td>
-              <td>34.5</td>
-              <td>39</td>
-              <td>imagen</td>
-              <td>1</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+    <div class="table-responsive">
+      <table class="table table-bordered text-center align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>Clave producto</th>
+            <th>Categoría</th>
+            <th>Nombre</th>
+            <th>Marca</th>
+            <th>Presentación</th>
+            <th>Precio de compra</th>
+            <th>Precio de venta</th>
+            <th>Imagen</th>
+            <th>Activo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>MAHJ030812</td>
+            <td>refresco</td>
+            <td>coca cola retornable</td>
+            <td>coca cola</td>
+            <td>2.5L</td>
+            <td>34.5</td>
+            <td>39</td>
+            <td>imagen</td>
+            <td>1</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
-    <!--tabla de tipos de productos-->
-    <section class="bg-white p-4 rounded-4 shadow-sm mt-5">
-      <h5 class="fw-bold mb-4">tipo de producto</h5>
+  <!--tabla de tipos de productos-->
+  <section class="bg-white p-4 rounded-4 shadow-sm mt-5">
+    <h5 class="fw-bold mb-4">tipo de producto</h5>
 
-      <div class="table-responsive">
-        <table class="table table-bordered text-center align-middle">
-          <thead class="table-dark">
-            <tr>
-              <th>ID</th>
-              <th>Zona de almacen</th>
-              <th>Nombre</th>
-              <th>Riesgo de contaminación</th>
-              <th>descripción</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>1</td>
-              <td>Bebidas</td>
-              <td>bajo</td>
-              <td>son productos en envaces de plasticos</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+    <div class="table-responsive">
+      <table class="table table-bordered text-center align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Zona de almacen</th>
+            <th>Nombre</th>
+            <th>Riesgo de contaminación</th>
+            <th>descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>1</td>
+            <td>Bebidas</td>
+            <td>bajo</td>
+            <td>son productos en envaces de plasticos</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
 
-    <!--tabla de zonas de almacén -->
-    <section class="bg-white p-4 rounded-4 shadow-sm mt-5">
-      <h5 class="fw-bold mb-4">Zonas de almacén</h5>
+  <!--tabla de zonas de almacén -->
+  <section class="bg-white p-4 rounded-4 shadow-sm mt-5">
+    <h5 class="fw-bold mb-4">Zonas de almacén</h5>
 
-      <div class="table-responsive">
-        <table class="table table-bordered text-center align-middle">
-          <thead class="table-dark">
-            <tr>
-              <th>ID zona</th>
-              <th>Nombre de zona</th>
-              <th>Descripción</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>Bebidas</td>
-              <td>Zona de almacenamiento de productos líquidos</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+    <div class="table-responsive">
+      <table class="table table-bordered text-center align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>ID zona</th>
+            <th>Nombre de zona</th>
+            <th>Descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Bebidas</td>
+            <td>Zona de almacenamiento de productos líquidos</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
-  </main>
+</main>
 
-  {% endblock %}
+{% endblock %}
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

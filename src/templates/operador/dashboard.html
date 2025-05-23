@@ -1,0 +1,89 @@
+{% include 'partials/menu.html' %}
+{% block content %}
+<main class="main-content">
+<!-- RESUMEN DE ESTADÍSTICAS -->
+<section class="row text-center mb-4">
+    <div class="col-md-3">
+      <div class="bg-white p-3 rounded-4 shadow-sm">
+        <h6 class="fw-bold text-muted">Cajas procesadas</h6>
+        <h3 class="text-success fw-bold">154</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="bg-white p-3 rounded-4 shadow-sm">
+        <h6 class="fw-bold text-muted">Cajas en espera</h6>
+        <h3 class="text-warning fw-bold">8</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="bg-white p-3 rounded-4 shadow-sm">
+        <h6 class="fw-bold text-muted">Cajas rechazadas</h6>
+        <h3 class="text-danger fw-bold">2</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="bg-white p-3 rounded-4 shadow-sm">
+        <h6 class="fw-bold text-muted">Zona activa</h6>
+        <h3 class="text-primary fw-bold">Zona 3</h3>
+      </div>
+    </div>
+  </section>
+  
+  <!-- BOTONES DE ACCIÓN -->
+  <section class="mb-4 row g-2">
+    <div class="col-12 col-sm-6 col-md-4">
+      <a href="#" class="btn w-100 btn-warning fw-bold py-2 rounded-pill">Registrar entrada</a>
+    </div>
+    <div class="col-12 col-sm-6 col-md-4">
+      <a href="#" class="btn w-100 btn-warning fw-bold py-2 rounded-pill">Registrar salida</a>
+    </div>
+    <div class="col-12 col-sm-6 col-md-4">
+      <a href="#" class="btn w-100 btn-danger fw-bold py-2 rounded-pill">Reportar error</a>
+    </div>
+  </section>
+  
+  <!-- TABLA DE MOVIMIENTO DE CAJAS -->
+  <section class="bg-white p-4 rounded-4 shadow-sm mb-5">
+    <h5 class="fw-bold mb-4">Movimiento de cajas</h5>
+    <div class="table-responsive">
+      <table class="table table-bordered text-center align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>Clave</th>
+            <th>Producto</th>
+            <th>Zona</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>CAJ0004</td>
+            <td>Frijol 1kg</td>
+            <td>Zona 1</td>
+            <td class="text-success fw-bold">Entrada</td>
+            <td>08/05/2025</td>
+            <td>10:15 AM</td>
+          </tr>
+          <tr>
+            <td>CAJ0005</td>
+            <td>Azúcar 2kg</td>
+            <td>Zona 3</td>
+            <td class="text-danger fw-bold">Rechazada</td>
+            <td>08/05/2025</td>
+            <td>10:30 AM</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  
+</main>
+
+{% endblock %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

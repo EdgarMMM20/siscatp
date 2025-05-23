@@ -106,7 +106,8 @@ def dashboard_owner_registeruser():
 @app_routes.route('/dashboard/capturista/principal')
 @validar_sesion_y_rol("capturista")
 def dashboard_capturista():
-    return render_template('capturista/dashboard.html')
+    mostrar_alerta = session.pop("mostrar_alerta", False)
+    return render_template('capturista/dashboard.html', mostrar_alerta=mostrar_alerta)
 
 @app_routes.route('/dashboard/capturista/registrarcaja')
 @validar_sesion_y_rol("capturista")
@@ -127,3 +128,14 @@ def dashboard_capturista_registrartpro():
 @validar_sesion_y_rol("capturista")
 def dashboard_capturista_registrarzona():
     return render_template('capturista/registrarzona.html')
+
+#---------------------------- RUTAS PARA OPERADOR ---------------------------------------
+@app_routes.route('/dashboard/operador/principal')
+@validar_sesion_y_rol("operador")
+def dashboard_operador():
+    return render_template('operador/dashboard.html')
+
+@app_routes.route('/dashboard/operador/bandatransportadora')
+@validar_sesion_y_rol("operador")
+def dashboard_operador_bandatransportadora():
+    return render_template('operador/bandatransp.html')

@@ -30,15 +30,19 @@
             {'href': '/dashboard/capturista/registrarzona', 'icon': 'location-outline', 'label': 'Zonas'}
         ] %}
         <!-- ejemplo para agregar mas sliber por puesto-->
-    {% elif nombre_puesto == 'almacenista' %}
+    {% elif nombre_puesto == 'operador' %}
         {% set base_menu = [
-            {'href': '/dashboard/almacenista/principal', 'icon': 'grid-outline', 'label': 'Dashboard'},
+            {'href': '/dashboard/operador/principal', 'icon': 'grid-outline', 'label': 'Dashboard'},
+            {'href': '/dashboard/operador/bandatransportadora', 'icon': 'hardware-chip-outline', 'label': 'Banda transportadora'}
         ] %}
     {% else %}
         {% set base_menu = [] %}
     {% endif %}
 {% endif %}
 {% block head %}
+<!DOCTYPE html>
+<html lang="es">
+<body>
 <head>
     <meta charset="UTF-8" />
     <title>SISCATP - Dashboard</title>

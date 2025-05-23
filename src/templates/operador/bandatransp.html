@@ -1,0 +1,147 @@
+{% extends 'operador/dashboard.html' %}
+
+{% block content %}
+<main class="main-content">
+    <section class="bandaT">
+      <h4 class="mb-4 fw-bold text-center">Panel de Control - Banda Transportadora</h4>
+  
+      <div class="pantalla" id="pantalla">
+        <pre>Cargando mensajes...</pre>
+      </div>
+  
+      <!-- Código + Botones de motor -->
+      <div class="form-group mb-4">
+        <input type="text" id="codigoInput" placeholder="Escanea el código aquí" inputmode="none" autofocus>
+        <div class="formbtn mt-3">
+          <button class="iniciarbtn" onclick="iniciarMotor()"><ion-icon name="play"></ion-icon> Iniciar</button>
+          <button class="detenerbtn" onclick="detenerMotor()"><ion-icon name="stop"></ion-icon> Detener</button>
+        </div>
+      </div>
+  
+      <!-- Botones de servos -->
+      <div class="form-group mb-4">
+        <label class="form-label fw-semibold d-block text-center mb-2">Control de Servos</label>
+        <div class="formbtn">
+          <button class="iniciarbtn" onclick="controlarServo('servo2')">Servo 1</button>
+          <button class="iniciarbtn" onclick="controlarServo('servo1')">Servo 2</button>
+          <button class="iniciarbtn" onclick="controlarServo('servo3')">Servo 3</button>
+        </div>
+      </div>
+  
+      <!-- Botones de sensor -->
+      <div class="form-group">
+        <label class="form-label fw-semibold d-block text-center mb-2">Sensor IR</label>
+        <div class="formbtn">
+          <button class="iniciarbtn" onclick="activarSensor()">Activar Sensor IR</button>
+          <button class="detenerbtn" onclick="desactivaSensor()">Desactivar Sensor IR</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const esp32Url = '/esp32';
+
+    function detenerMotor() {
+        fetch(`${esp32Url}/motor/detener`)
+            .then(res => res.text())
+            .catch(err => console.error("Error al detener motor:", err));
+    }
+
+    function iniciarMotor() {
+        fetch(`${esp32Url}/motor/iniciar`)
+            .then(res => res.text())
+            .catch(err => console.error("Error al iniciar motor:", err));
+    }
+
+    function controlarServo(servo) {
+        fetch(`${esp32Url}/servo/${servo}`)
+            .then(res => res.text())
+            .catch(err => console.error(`Error al controlar el servo ${servo}:`, err));
+    }
+
+    function activarSensor() {
+        fetch(`${esp32Url}/sensor/activar`)
+            .then(res => res.text())
+            .catch(err => console.error("Error al activar sensor:", err));
+    }
+
+    function desactivaSensor() {
+        fetch(`${esp32Url}/sensor/desactivar`)
+            .then(res => res.text())
+            .catch(err => console.error("Error al desactivar sensor:", err));
+    }
+
+    // === Captura automática del código ===
+    document.addEventListener('DOMContentLoaded', function () {
+        const inputCodigo = document.getElementById('codigoInput');
+        let timeout;
+
+        function capturarCodigo(codigo) {
+            console.log("Código capturado:", codigo);
+
+            fetch('/consulta_caja', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ cvcaja: codigo })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.idzona) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Clasificación exitosa',
+                        text: `Asignado a zona ${data.idzona}`,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                } else if (data.error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.error
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+            inputCodigo.value = "";
+        }
+
+        inputCodigo.addEventListener('keydown', function () {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                const codigo = inputCodigo.value.trim();
+                if (codigo !== "") capturarCodigo(codigo);
+            }, 300);
+        });
+
+        inputCodigo.focus();
+        inputCodigo.addEventListener('blur', () => {
+            setTimeout(() => inputCodigo.focus(), 100);
+        });
+    });
+
+    function actualizarMensajes() {
+        fetch('/mensajes')
+            .then(response => response.json())
+            .then(data => {
+                const pantalla = document.querySelector('.pantalla');
+                pantalla.innerHTML = `<pre>${data.mensajes}</pre>`;
+            })
+            .catch(error => {
+                console.error("Error al obtener los mensajes:", error);
+            });
+    }
+
+    setInterval(actualizarMensajes, 2000);
+    window.onload = actualizarMensajes;
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% endblock %}

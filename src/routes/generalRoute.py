@@ -69,11 +69,17 @@ def login():
             # Si es empleado, obtener su puesto y sucursal
             if rol_id == "2":
                 query_emp = """
-                    SELECT p.nombre AS nombre_puesto, s.nombre AS nombre_sucursal, e.idpuesto, e.idsucursal
-                    FROM empleado e
-                    LEFT JOIN puesto p ON e.idpuesto = p.idpuesto
-                    LEFT JOIN sucursal s ON e.idsucursal = s.id
-                    WHERE e.rfc = %s;
+                    SELECT 
+            p.nombre AS nombre_puesto,
+            s.nombre AS nombre_sucursal,
+            e.idpuesto,
+            e.idsucursal,
+            c.rfccomp
+        FROM empleado e
+        LEFT JOIN puesto p ON e.idpuesto = p.idpuesto
+        LEFT JOIN sucursal s ON e.idsucursal = s.id
+        LEFT JOIN compania c ON s.rfccomp = c.rfccomp
+        WHERE e.rfc = %s;
                 """
                 cursor.execute(query_emp, (rfc,))
                 emp_data = cursor.fetchone()
@@ -83,16 +89,20 @@ def login():
                     cerrar_sesion("El empleado no tiene puesto o sucursal asignada", "danger")
                     return redirect(url_for("general_bp.login"))
 
-                nombre_puesto, nombre_sucursal, idpuesto, idsucursal = emp_data
+                nombre_puesto, nombre_sucursal, idpuesto, idsucursal, rfc_comp = emp_data
 
                 session["nombre_puesto"] = nombre_puesto
                 session["nombre_sucursal"] = nombre_sucursal
                 session["idpuesto"] = idpuesto
                 session["idsucursal"] = idsucursal
+                session["rfccomp"] = rfc_comp
 
                 # Redirigir según el puesto
                 if nombre_puesto.lower() == "capturista":
+                    session["mostrar_alerta"] = True
                     return redirect(url_for("app_routes.dashboard_capturista"))
+                elif nombre_puesto.lower() == "operador":
+                    return redirect(url_for("app_routes.dashboard_operador"))
                 #elif nombre_puesto.lower() == "almacenista":
                     #return redirect(url_for("app_routes.dashboard_almacenista"))
                 else:
@@ -340,6 +350,70 @@ def get_turnos_by_puesto_sucursal(idpuesto, idsucursal):
         return jsonify(turnos)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+@general_bp.route("/get-alertas", methods=["GET"])
+def get_alertas():
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+
+        rol = str(session.get("rol", ""))
+        rfc_usuario = session.get("rfc", "")
+        idsucursal = session.get("idsucursal", "")
+        rfccomp = None
+
+        if rol == "1":  # Dueño
+            cursor.execute("SELECT rfccomp FROM compania WHERE rfcdueno = %s AND estatus = 1", (rfc_usuario,))
+            resultado = cursor.fetchone()
+            if resultado:
+                rfccomp = resultado[0]
+
+        elif rol == "2":  # Empleado
+            cursor.execute("SELECT rfccomp FROM sucursal WHERE id = %s", (idsucursal,))
+            resultado = cursor.fetchone()
+            if resultado:
+                rfccomp = resultado[0]
+
+        elif rol == "0":  # Superusuario
+            rfccomp = session.get("rfccomp")  # opcional
+
+        if not rfccomp or not idsucursal:
+            return jsonify({"caducidades": [], "stock_bajo": []})
+
+        # Productos próximos a caducar en 15 días (por sucursal)
+        cursor.execute("""
+            SELECT c.cvcaja, p.nombre, DATEDIFF(c.fcaducidad, CURDATE()) AS dias
+            FROM cajas c
+            JOIN producto p ON c.cvpro = p.cvpro AND c.rfccomp = p.rfccomp
+            WHERE c.rfccomp = %s AND c.idsucursal = %s AND c.estado = 'disponible'
+              AND c.fcaducidad IS NOT NULL AND DATEDIFF(c.fcaducidad, CURDATE()) BETWEEN 0 AND 15
+            ORDER BY dias ASC
+        """, (rfccomp, idsucursal))
+        caducidades = cursor.fetchall()
+
+        # Productos con bajo stock (menos de 6 cajas, por sucursal)
+        cursor.execute("""
+            SELECT p.nombre, COUNT(*) AS cantidad
+            FROM cajas c
+            JOIN producto p ON c.cvpro = p.cvpro AND c.rfccomp = p.rfccomp
+            WHERE c.rfccomp = %s AND c.idsucursal = %s AND c.estado = 'disponible'
+            GROUP BY p.cvpro
+            HAVING cantidad <= 6
+            ORDER BY cantidad ASC
+        """, (rfccomp, idsucursal))
+        stock_bajo = cursor.fetchall()
+
+        return jsonify({
+            "caducidades": caducidades,
+            "stock_bajo": stock_bajo
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
     finally:
         cursor.close()
         conn.close()
